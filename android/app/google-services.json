@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "23892425861",
+    "project_id": "proyecto-club-c2df1",
+    "storage_bucket": "proyecto-club-c2df1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23892425861:android:ca63d642d22a3d495a3dec",
+        "android_client_info": {
+          "package_name": "mx.edu.ittepic.proyecto_dam"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwiZWi18XbzBAUFUTV-ZH_kg_6rcWCceA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
