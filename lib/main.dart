@@ -64,6 +64,7 @@ class _MyAppState extends State<MyApp> {
               SizedBox(height: 20),
               TextField(
                 controller: password,
+                obscureText: false,
                 decoration: InputDecoration(
                   labelText: "Contraseña:",
                 ),
