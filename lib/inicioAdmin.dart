@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proyecto_dam/ServiciosRemotos.dart';
 import 'package:proyecto_dam/main.dart';
 
 class Admin extends StatefulWidget {
@@ -72,24 +73,54 @@ class _AdminState extends State<Admin> {
       case 3: return LSocios();
       case 4: return Solicitud();
       case 5: return Reservacion();
-      case 6: return Cerrar();
       default:
         return Inicio();
     }
   }
 
-  itemDrawer(int indice, IconData icono, String etiqueta, Color color) {
+  Widget itemDrawer(int indice, IconData icono, String etiqueta, Color color) {
     return ListTile(
-      onTap: (){
-        setState(() {
-          _indice = indice;
-        });
-        Navigator.pop(context);
+      onTap: () {
+        if (indice == 6) {
+          mostrarDialogoCerrarSesion();
+        } else {
+          setState(() {
+            _indice = indice;
+          });
+          Navigator.pop(context);
+        }
       },
       title: Row(
         children: [
-          Expanded(child: Icon(icono, color: color,),),
-          Expanded(child: Text(etiqueta,style: TextStyle(fontSize: 20),),flex: 2,)
+          Icon(icono, color: color),
+          SizedBox(width: 10),
+          Text(etiqueta, style: TextStyle(fontSize: 20)),
+        ],
+      ),
+    );
+  }
+
+  void mostrarDialogoCerrarSesion() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Cerrar Sesión"),
+        content: Text("¿Estás seguro de querer cerrar sesión?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(), // Cierra el diálogo
+            child: Text("NO"),
+          ),
+          TextButton(
+            onPressed: () {
+              Autenticacion.cerrarSesion().then((_) {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => MyApp()), // Asume que MyApp es tu pantalla de inicio de sesión
+                );
+              });
+            },
+            child: Text("SI"),
+          ),
         ],
       ),
     );
@@ -115,36 +146,5 @@ class _AdminState extends State<Admin> {
     return Scaffold();
   }
 
-  Widget Cerrar() {
-    return AlertDialog(
-      title: Text("Cerrar Sesion"),
-      content: Text("¿Estas Seguro de quere Cerrar Sesion?",
-        style: TextStyle(
-            fontSize: 20,
-            color: Colors.black
-        ),),
-      actions: [
-        TextButton(
-            onPressed: (){
-              Navigator.of(context).pop();
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context)=>MyApp()),
-              );
-            },
-            child: Text("SI")
-        ),
-        SizedBox(width: 20,),
-        TextButton(
-            onPressed: (){
-              Navigator.of(context).pop();
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context)=>Admin()),
-              );
-            },
-            child: Text("NO")
-        )
-      ],
-    );
-  }
 
 }
