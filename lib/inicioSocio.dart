@@ -24,10 +24,11 @@ class _InicioSocioState extends State<InicioSocio> {
 
   Future<void> cargarDatosSocio() async {
     socioActual = await SocioDB.obtenerSocioActual();
-    print("Socio cargado: ${socioActual?.nombre}"); // Añade esto para depuración
+    if (socioActual != null) {
+      print("Socio cargado: ${socioActual?.nombre}"); // Añade esto para depuración
+    }
     if (mounted) setState(() {});
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +106,7 @@ class _InicioSocioState extends State<InicioSocio> {
         }
       },
       leading: Expanded(child: Icon(icon, color: Colors.indigoAccent),),
-      title: Expanded(child: Text(text),flex: 2,),
+      title: Expanded(child: Text(text), flex: 2,),
     );
   }
 

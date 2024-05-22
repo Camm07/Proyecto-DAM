@@ -35,15 +35,33 @@ class _MyAppState extends State<MyApp> {
 
   void handleLogin() async {
     var user = await Autenticacion.autenticarUsuario(email.text, password.text);
-    var rol = await Autenticacion.verificarRol(user);
-    if (rol == 'administrador') {
-      Navigator.pushReplacementNamed(context, '/admin');
-    } else if (rol == 'socio') {
-      Navigator.pushReplacementNamed(context, '/socio');
+    if (user != null) {
+      var rol = await Autenticacion.obtenerRol();  // Obtiene el rol directamente desde SharedPreferences
+      switch (rol) {
+        case 'administrador':
+          Navigator.pushReplacementNamed(context, '/admin');
+          break;
+        case 'socio':
+          Navigator.pushReplacementNamed(context, '/socio');
+          break;
+        default:
+          mostrarErrorLogin();
+          break;
+      }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("ERROR")));
+      mostrarErrorLogin();
     }
   }
+
+  void mostrarErrorLogin() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Error de autenticación. Por favor verifica tus credenciales."),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
