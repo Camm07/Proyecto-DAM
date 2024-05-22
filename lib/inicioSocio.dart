@@ -1,32 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_dam/ServiciosRemotos.dart';
 import 'package:proyecto_dam/main.dart';
+import 'package:proyecto_dam/perfilSocio.dart';
 import 'package:proyecto_dam/socio.dart';
+import 'package:proyecto_dam/SocioDB.dart';
 
 class InicioSocio extends StatefulWidget {
   const InicioSocio({super.key});
 
   @override
-  State<InicioSocio> createState() => _SocioState();
+  State<InicioSocio> createState() => _InicioSocioState();
 }
 
-class _SocioState extends State<InicioSocio> {
-  int _indice=1;
-  Socio? socio;
+class _InicioSocioState extends State<InicioSocio> {
+  int _indice = 1;
+  Socio? socioActual;
+
+  @override
+  void initState() {
+    super.initState();
+    cargarDatosSocio();
+  }
+
+  Future<void> cargarDatosSocio() async {
+    socioActual = await SocioDB.obtenerSocioActual();
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("SOCIO",style: TextStyle(color: Colors.white)),
+        title: Text("SOCIO", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: Colors.indigoAccent,
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 16),
             child: IconButton(
-                onPressed: (){},
-                icon: Icon(Icons.access_time_outlined),
-                color: Colors.black,
+              icon: Icon(Icons.access_time_outlined),
+              color: Colors.black,
+              onPressed: () {},
             ),
           )
         ],
@@ -37,29 +51,24 @@ class _SocioState extends State<InicioSocio> {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-                child: Column(
-
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    CircleAvatar( backgroundImage: NetworkImage((socio?.fotoPerfil ?? 'https://via.placeholder.com/150'))),
-                      Text(socio?.nombre ?? 'Nombre del Socio', style: TextStyle(color: Colors.white)),
-                      Text("(C) Derechos reservados",style: TextStyle(color: Colors.white)),
-                  ],
-                ),
-              decoration: BoxDecoration(
-                color:Colors.indigoAccent
+              decoration: BoxDecoration(color: Colors.indigoAccent),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage: NetworkImage(socioActual?.fotoPerfil ?? 'https://via.placeholder.com/150'),
+                  ),
+                  SizedBox(height: 10),
+                  Text(socioActual?.nombre ?? 'Cargando...', style: TextStyle(color: Colors.white, fontSize: 20)),
+                ],
               ),
             ),
-            SizedBox(height: 30,),
-            itemDrawer(1,Icons.home,"Inicio",Colors.indigoAccent),
-            SizedBox(height: 20,),
-            itemDrawer(2,Icons.person,"Perfil",Colors.indigoAccent),
-            SizedBox(height: 20,),
-            itemDrawer(3,Icons.email,"Solicitud",Colors.indigoAccent),
-            SizedBox(height: 20,),
-            itemDrawer(4,Icons.calendar_month,"Reservación",Colors.indigoAccent),
-            SizedBox(height: 20,),
-            itemDrawer(5,Icons.output,"Cerrar Sesión",Colors.indigoAccent),
+            buildDrawerItem(Icons.home, "Inicio", 1),
+            buildDrawerItem(Icons.person, "Perfil", 2),
+            buildDrawerItem(Icons.email, "Solicitud", 3),
+            buildDrawerItem(Icons.calendar_month, "Reservación", 4),
+            buildDrawerItem(Icons.output, "Cerrar Sesión", 5),
           ],
         ),
       ),
@@ -67,38 +76,36 @@ class _SocioState extends State<InicioSocio> {
   }
 
   Widget pantallas() {
-    switch(_indice){
-      case 1: return Inicio();
-      case 2: return Perfil();
-      case 3: return Solicitud();
-      case 4: return Reservacion();
+    switch (_indice) {
+      case 1:
+        return Inicio();
+      case 2:
+        return socioActual != null ? PerfilSocio(socio: socioActual) : CircularProgressIndicator();
+      case 3:
+        return Solicitud();
+      case 4:
+        return Reservacion();
       default:
         return Inicio();
     }
   }
 
-
-  Widget itemDrawer(int indice, IconData icono, String etiqueta, Color color) {
+  Widget buildDrawerItem(IconData icon, String text, int index) {
     return ListTile(
+      leading: Icon(icon, color: Colors.indigoAccent),
+      title: Text(text),
       onTap: () {
-        if (indice == 5) {
-          mostrarDialogoCerrarSesion();
-        } else {
-          setState(() {
-            _indice = indice;
-          });
-          Navigator.pop(context);
-        }
+        setState(() {
+          _indice = index;
+        });
+        Navigator.pop(context);
       },
-      title: Row(
-        children: [
-          Expanded(child: Icon(icono, color: color)),
-          SizedBox(width: 10),
-          Expanded(child: Text(etiqueta, style: TextStyle(fontSize: 20),),flex: 2,),
-        ],
-      ),
     );
   }
+
+  Widget Inicio() => Center(child: Text('Bienvenido, ${socioActual?.nombre ?? "Socio"}', style: TextStyle(fontSize: 24)));
+  Widget Solicitud() => Center(child: Text('Página de Solicitudes'));
+  Widget Reservacion() => Center(child: Text('Página de Reservaciones'));
 
   void mostrarDialogoCerrarSesion() {
     showDialog(
@@ -108,14 +115,14 @@ class _SocioState extends State<InicioSocio> {
         content: Text("¿Estás seguro de querer cerrar sesión?"),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(), // Cierra el diálogo
+            onPressed: () => Navigator.of(context).pop(),
             child: Text("NO"),
           ),
           TextButton(
             onPressed: () {
               Autenticacion.cerrarSesion().then((_) {
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => MyApp()), // Asume que MyApp es tu pantalla de inicio de sesión
+                  MaterialPageRoute(builder: (context) => MyApp()),
                 );
               });
             },
@@ -125,28 +132,5 @@ class _SocioState extends State<InicioSocio> {
       ),
     );
   }
-
-  Widget Inicio() {
-    return Scaffold();
-  }
-
-  Widget Perfil() {
-    return Scaffold();
-  }
-
-  Widget Solicitud() {
-    return Scaffold();
-  }
-
-  Widget Reservacion() {
-    return Scaffold();
-  }
-
-
-
-
-
-
-
-
 }
+

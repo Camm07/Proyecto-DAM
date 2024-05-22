@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:proyecto_dam/socio.dart';
 
 class SocioDB {
@@ -28,4 +29,22 @@ class SocioDB {
   static Stream<QuerySnapshot> obtenerSociosStream() {
     return db.collection("Socios").snapshots();
   }
+
+  static Future<Socio?> obtenerSocioActual() async {
+    String? userId = FirebaseAuth.instance.currentUser?.uid; // UID del usuario actual de Firebase
+
+    if (userId != null) {
+      // Suponiendo que existe una colección 'usuarios' donde mapeas UID a ID de documento de socios
+      var userDoc = await db.collection('usuarios').doc(userId).get();
+      if (userDoc.exists) {
+        String socioId = userDoc.data()?['socioId'];  // Asumimos que hay un campo 'socioId' que contiene el ID del documento de Socios
+        var socioDoc = await db.collection('Socios').doc(socioId).get();
+        if (socioDoc.exists) {
+          return Socio.fromMap(socioDoc.data() as Map<String, dynamic>, socioDoc.id);
+        }
+      }
+    }
+    return null;  // Retorna null si no hay usuario logueado o no se encuentra el documento
+  }
+
 }
