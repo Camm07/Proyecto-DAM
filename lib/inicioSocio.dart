@@ -24,8 +24,10 @@ class _InicioSocioState extends State<InicioSocio> {
 
   Future<void> cargarDatosSocio() async {
     socioActual = await SocioDB.obtenerSocioActual();
+    print("Socio cargado: ${socioActual?.nombre}"); // Añade esto para depuración
     if (mounted) setState(() {});
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +58,7 @@ class _InicioSocioState extends State<InicioSocio> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircleAvatar(
-                    radius: 50,
+                    radius: 40,
                     backgroundImage: NetworkImage(socioActual?.fotoPerfil ?? 'https://via.placeholder.com/150'),
                   ),
                   SizedBox(height: 10),
@@ -92,14 +94,18 @@ class _InicioSocioState extends State<InicioSocio> {
 
   Widget buildDrawerItem(IconData icon, String text, int index) {
     return ListTile(
-      leading: Icon(icon, color: Colors.indigoAccent),
-      title: Text(text),
       onTap: () {
-        setState(() {
-          _indice = index;
-        });
-        Navigator.pop(context);
+        if (index == 5) {
+          mostrarDialogoCerrarSesion();
+        } else {
+          setState(() {
+            _indice = index;
+          });
+          Navigator.pop(context);
+        }
       },
+      leading: Expanded(child: Icon(icon, color: Colors.indigoAccent),),
+      title: Expanded(child: Text(text),flex: 2,),
     );
   }
 

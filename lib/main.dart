@@ -80,7 +80,7 @@ class _MyAppState extends State<MyApp> {
                 ),
                 SizedBox(height: 10,),
                 Image.asset("assets/logoclub.png",width: 350,height: 350,),
-                SizedBox(height: 15,),
+                SizedBox(height: 25,),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(
@@ -96,8 +96,22 @@ class _MyAppState extends State<MyApp> {
                           )
                       )
                   ),
-                )
-
+                ),
+                SizedBox(height: 150,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center, // Alinea los elementos horizontalmente al centro
+                  children: [
+                    Icon(
+                      Icons.location_on, // Icono de ubicación
+                      color: Colors.white,
+                    ),
+                    SizedBox(width: 10), // Espacio horizontal entre el icono y el texto
+                    Text(
+                      "Av. del parque #45",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
