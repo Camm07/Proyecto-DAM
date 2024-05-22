@@ -24,4 +24,8 @@ class SocioDB {
   static Future<void> cambiarEstadoSocio(String id, String nuevoEstado) async {
     await db.collection("Socios").doc(id).update({'status': nuevoEstado});
   }
+
+  static Stream<QuerySnapshot> obtenerSociosStream() {
+    return db.collection("Socios").snapshots();
+  }
 }

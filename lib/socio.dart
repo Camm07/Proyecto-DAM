@@ -8,11 +8,10 @@ class Socio {
   String telefono;
   String fotoPerfil;
   String status;
-  String uid;  // Campo UID para identificar unívocamente al socio
+  String uid;
 
-  // Constructor de la clase Socio con parámetros requeridos y opcionales
   Socio({
-    this.id = '',  // ID opcional, útil cuando se recupera un socio existente de Firestore
+    this.id = '',
     required this.nombre,
     required this.apellidos,
     required this.correo,
@@ -22,7 +21,6 @@ class Socio {
     required this.uid,
   });
 
-  // Método para convertir un objeto Socio a un mapa, útil para operaciones de Firestore
   Map<String, dynamic> toMap() {
     return {
       'nombre': nombre,
@@ -35,17 +33,17 @@ class Socio {
     };
   }
 
-  // Fábrica para crear un objeto Socio desde un mapa, típicamente utilizado al recuperar datos de Firestore
   factory Socio.fromMap(Map<String, dynamic> map, String id) {
     return Socio(
       id: id,
-      nombre: map['nombre'],
-      apellidos: map['apellidos'],
-      correo: map['correo'],
-      telefono: map['telefono'],
-      fotoPerfil: map['fotoPerfil'] ?? '',  // Usa un valor por defecto si fotoPerfil es null
-      status: map['status'],
-      uid: map['uid'],
+      nombre: map['nombre'] ?? '',
+      apellidos: map['apellidos'] ?? '',
+      correo: map['correo'] ?? '',
+      telefono: map['telefono'] ?? '',
+      fotoPerfil: map['fotoPerfil'] ?? 'https://firebasestorage.googleapis.com/v0/b/proyecto-club-c2df1.appspot.com/o/socio.png?alt=media&token=b766c205-80ec-45c6-bc3b-d6aadbcbb010',
+      status: map['status'] ?? 'Activo',  // Proporciona un valor por defecto para el estado si no está presente
+      uid: map['uid'] ?? '',
     );
   }
 }
+

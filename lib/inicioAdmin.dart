@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:proyecto_dam/ServiciosRemotos.dart';
 import 'package:proyecto_dam/main.dart';
 import 'package:proyecto_dam/registroSocios.dart';
+import 'package:proyecto_dam/verSocios.dart';
 
 
 class InicioAdmin extends StatefulWidget {
@@ -134,9 +135,7 @@ class _AdminState extends State<InicioAdmin> {
 
 
 
-  Widget LSocios() {
-    return Scaffold();
-  }
+
 
   Widget Solicitud() {
     return Scaffold();
