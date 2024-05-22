@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_dam/ServiciosRemotos.dart';
 import 'package:proyecto_dam/main.dart';
+import 'package:proyecto_dam/socio.dart';
 
 class InicioSocio extends StatefulWidget {
   const InicioSocio({super.key});
@@ -11,13 +12,14 @@ class InicioSocio extends StatefulWidget {
 
 class _SocioState extends State<InicioSocio> {
   int _indice=1;
+  Socio? socio;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("SOCIO"),
+        title: Text("SOCIO",style: TextStyle(color: Colors.white)),
         centerTitle: true,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.indigoAccent,
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 16),
@@ -36,28 +38,28 @@ class _SocioState extends State<InicioSocio> {
           children: [
             DrawerHeader(
                 child: Column(
+
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    CircleAvatar(
-                      child: Text("ITT",style: TextStyle(color: Colors.black),),radius: 30,backgroundColor: Colors.orangeAccent,),
-                      Text("Tecnológico de Tepic",),
-                      Text("(C) Derechos reservados",),
+                    CircleAvatar( backgroundImage: NetworkImage((socio?.fotoPerfil ?? 'https://via.placeholder.com/150'))),
+                      Text(socio?.nombre ?? 'Nombre del Socio', style: TextStyle(color: Colors.white)),
+                      Text("(C) Derechos reservados",style: TextStyle(color: Colors.white)),
                   ],
                 ),
               decoration: BoxDecoration(
-                color: Color(0xFFFFC107).withOpacity(0.6)
+                color:Colors.indigoAccent
               ),
             ),
             SizedBox(height: 30,),
-            itemDrawer(1,Icons.home,"Inicio",Colors.orangeAccent),
+            itemDrawer(1,Icons.home,"Inicio",Colors.indigoAccent),
             SizedBox(height: 20,),
-            itemDrawer(2,Icons.person,"Perfil",Colors.orangeAccent),
+            itemDrawer(2,Icons.person,"Perfil",Colors.indigoAccent),
             SizedBox(height: 20,),
-            itemDrawer(3,Icons.email,"Solicitud",Colors.orangeAccent),
+            itemDrawer(3,Icons.email,"Solicitud",Colors.indigoAccent),
             SizedBox(height: 20,),
-            itemDrawer(4,Icons.calendar_month,"Reservacion",Colors.orangeAccent),
+            itemDrawer(4,Icons.calendar_month,"Reservación",Colors.indigoAccent),
             SizedBox(height: 20,),
-            itemDrawer(5,Icons.output,"Cerrar Sesion",Colors.orangeAccent),
+            itemDrawer(5,Icons.output,"Cerrar Sesión",Colors.indigoAccent),
           ],
         ),
       ),
@@ -90,9 +92,9 @@ class _SocioState extends State<InicioSocio> {
       },
       title: Row(
         children: [
-          Icon(icono, color: color),
+          Expanded(child: Icon(icono, color: color)),
           SizedBox(width: 10),
-          Text(etiqueta, style: TextStyle(fontSize: 20)),
+          Expanded(child: Text(etiqueta, style: TextStyle(fontSize: 20),),flex: 2,),
         ],
       ),
     );

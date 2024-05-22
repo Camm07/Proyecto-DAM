@@ -21,7 +21,8 @@ class _RSociosState extends State<RSocios> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Registrar Socios"),
+        title: Text("Registrar Socio",style: TextStyle(color: Colors.indigo,fontSize: 30),),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
@@ -29,33 +30,49 @@ class _RSociosState extends State<RSocios> {
           children: <Widget>[
             TextField(
               controller: _nombreController,
-              decoration: InputDecoration(labelText: 'Nombre'),
+              decoration: InputDecoration(labelText: 'Nombre',
+                  suffixIcon: Icon(Icons.person)),
             ),
             TextField(
               controller: _apellidosController,
-              decoration: InputDecoration(labelText: 'Apellidos'),
+              decoration: InputDecoration(labelText: 'Apellidos',
+                  suffixIcon: Icon(Icons.person)),
             ),
             TextField(
               controller: _correoController,
-              decoration: InputDecoration(labelText: 'Correo'),
+              decoration: InputDecoration(labelText: 'Correo',
+                  suffixIcon: Icon(Icons.mail)),
             ),
             TextField(
               controller: _telefonoController,
-              decoration: InputDecoration(labelText: 'Teléfono'),
+              decoration: InputDecoration(labelText: 'Teléfono',
+                  suffixIcon: Icon(Icons.call)),
             ),
             TextField(
               controller: _curpController,
-              decoration: InputDecoration(labelText: 'CURP'),
+              decoration: InputDecoration(labelText: 'CURP',
+                  suffixIcon: Icon(Icons.dashboard)),
             ),
             TextField(
               controller: _contrasenaController,
-              decoration: InputDecoration(labelText: 'Contraseña'),
+              decoration: InputDecoration(labelText: 'Contraseña',
+                  suffixIcon: Icon(Icons.password)),
               obscureText: true,
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 35),
             ElevatedButton(
               onPressed: _registrarSocio,
               child: Text('Registrar Socio'),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.indigo), // Establece el color de fondo a índigo
+                foregroundColor: MaterialStateProperty.all(Colors.white), // Establece el color del texto a blanco
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0), // Añade bordes redondeados al botón
+                    )
+                ),
+                padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0)), // Añade padding interno
+              ),
             ),
           ],
         ),

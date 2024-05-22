@@ -18,16 +18,16 @@ class _AdminState extends State<InicioAdmin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("ADMIN"),
+        title: Text("Bienvenido Admin",style: TextStyle(color: Colors.white),),
         centerTitle: true,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.indigoAccent,
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 16),
             child: IconButton(
               onPressed: (){},
               icon: Icon(Icons.access_time_outlined),
-              color: Colors.black,
+              color: Colors.white,
             ),
           )
         ],
@@ -41,28 +41,27 @@ class _AdminState extends State<InicioAdmin> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  CircleAvatar(
-                    child: Text("ITT",style: TextStyle(color: Colors.black),),radius: 30,backgroundColor: Colors.orangeAccent,),
-                  Text("Tecnológico de Tepic",),
-                  Text("(C) Derechos reservados",),
+                  CircleAvatar(  child:Image.asset("assets/logoclub.png") ),
+                  Text("Club Deportivo del Valle",style: TextStyle(color: Colors.white),),
+                  Text("(C) Derechos reservados",style: TextStyle(color: Colors.white)),
                 ],
               ),
               decoration: BoxDecoration(
-                  color: Color(0xFFFFC107).withOpacity(0.6)
+                  color: Colors.indigo
               ),
             ),
             SizedBox(height: 30,),
-            itemDrawer(1,Icons.home,"Inicio",Colors.orangeAccent),
+            itemDrawer(1,Icons.home,"Inicio",Colors.indigoAccent),
             SizedBox(height: 20,),
-            itemDrawer(2,Icons.person,"Registrar Socios",Colors.orangeAccent),
+            itemDrawer(2,Icons.person,"Registrar Socios",Colors.indigoAccent),
             SizedBox(height: 20,),
-            itemDrawer(3,Icons.person,"Listado de  Socios",Colors.orangeAccent),
+            itemDrawer(3,Icons.list_alt_outlined,"Listado de  Socios",Colors.indigoAccent),
             SizedBox(height: 20,),
-            itemDrawer(4,Icons.email,"Solicitud",Colors.orangeAccent),
+            itemDrawer(4,Icons.email,"Solicitud",Colors.indigoAccent),
             SizedBox(height: 20,),
-            itemDrawer(5,Icons.calendar_month,"Reservacion",Colors.orangeAccent),
+            itemDrawer(5,Icons.calendar_month,"Reservacion",Colors.indigoAccent),
             SizedBox(height: 20,),
-            itemDrawer(6,Icons.output,"Cerrar Sesion",Colors.orangeAccent),
+            itemDrawer(6,Icons.output,"Cerrar Sesion",Colors.indigoAccent),
           ],
         ),
       ),
@@ -95,9 +94,9 @@ class _AdminState extends State<InicioAdmin> {
       },
       title: Row(
         children: [
-          Icon(icono, color: color),
+          Expanded(child: Icon(icono, color: color)),
           SizedBox(width: 10),
-          Text(etiqueta, style: TextStyle(fontSize: 20)),
+          Expanded(child: Text(etiqueta, style: TextStyle(fontSize: 20)),flex: 2,),
         ],
       ),
     );
