@@ -14,8 +14,8 @@ void main() async {
     debugShowCheckedModeBanner: false,
     home: MyApp(),
     routes: {
-      '/admin': (context) => Admin(),
-      '/socio': (context) => Socio(),
+      '/admin': (context) => InicioAdmin(),
+      '/socio': (context) => InicioSocio(),
     },
   ));
 }

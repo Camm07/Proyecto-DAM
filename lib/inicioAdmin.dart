@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_dam/ServiciosRemotos.dart';
 import 'package:proyecto_dam/main.dart';
+import 'package:proyecto_dam/registroSocios.dart';
 
-class Admin extends StatefulWidget {
-  const Admin({super.key});
+
+class InicioAdmin extends StatefulWidget {
+  const InicioAdmin({super.key});
 
   @override
-  State<Admin> createState() => _AdminState();
+  State<InicioAdmin> createState() => _AdminState();
 }
 
-class _AdminState extends State<Admin> {
+class _AdminState extends State<InicioAdmin> {
   int _indice=1;
   @override
   Widget build(BuildContext context) {
@@ -130,9 +132,7 @@ class _AdminState extends State<Admin> {
     return Scaffold();
   }
 
-  Widget RSocios() {
-    return Scaffold();
-  }
+
 
   Widget LSocios() {
     return Scaffold();

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:proyecto_dam/ServiciosRemotos.dart';
 import 'package:proyecto_dam/main.dart';
 
-class Socio extends StatefulWidget {
-  const Socio({super.key});
+class InicioSocio extends StatefulWidget {
+  const InicioSocio({super.key});
 
   @override
-  State<Socio> createState() => _SocioState();
+  State<InicioSocio> createState() => _SocioState();
 }
 
-class _SocioState extends State<Socio> {
+class _SocioState extends State<InicioSocio> {
   int _indice=1;
   @override
   Widget build(BuildContext context) {
@@ -124,7 +124,6 @@ class _SocioState extends State<Socio> {
     );
   }
 
-
   Widget Inicio() {
     return Scaffold();
   }
@@ -141,32 +140,7 @@ class _SocioState extends State<Socio> {
     return Scaffold();
   }
 
-  // Este método debería ser llamado desde algún lugar, por ejemplo, un botón en tu Drawer
-  void Cerrar() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Cerrar Sesión"),
-        content: Text("¿Estás seguro de querer cerrar sesión?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),  // Solo cierra el diálogo
-            child: Text("NO"),
-          ),
-          TextButton(
-            onPressed: () {
-              Autenticacion.cerrarSesion().then((value) {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => MyApp()),  // Asumiendo que MyApp es tu pantalla de inicio de sesión
-                );
-              });
-            },
-            child: Text("SI"),
-          ),
-        ],
-      ),
-    );
-  }
+
 
 
 
