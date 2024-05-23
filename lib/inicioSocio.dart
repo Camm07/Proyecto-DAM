@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:proyecto_dam/ServiciosRemotos.dart';
 import 'package:proyecto_dam/main.dart';
 import 'package:proyecto_dam/perfilSocio.dart';
+import 'package:proyecto_dam/reservacionSocio.dart';
 import 'package:proyecto_dam/socio.dart';
 import 'package:proyecto_dam/SocioDB.dart';
+import 'package:proyecto_dam/solicitudSocio.dart';
 
 class InicioSocio extends StatefulWidget {
   const InicioSocio({super.key});
@@ -85,9 +87,9 @@ class _InicioSocioState extends State<InicioSocio> {
       case 2:
         return socioActual != null ? PerfilSocio(socio: socioActual) : CircularProgressIndicator();
       case 3:
-        return Solicitud();
+        return SolicitudesS();
       case 4:
-        return Reservacion();
+        return ReservacionS();
       default:
         return Inicio();
     }
