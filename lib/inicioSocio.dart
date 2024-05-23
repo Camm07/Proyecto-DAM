@@ -36,6 +36,7 @@ class _InicioSocioState extends State<InicioSocio> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
         title: Text("SOCIO", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: Colors.indigoAccent,

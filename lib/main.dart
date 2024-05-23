@@ -79,6 +79,7 @@ class _MyAppState extends State<MyApp> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          foregroundColor: Colors.transparent,
           title: Text(
             "Bienvenidxs",
             style: TextStyle(color: Colors.white),

@@ -49,33 +49,61 @@ class _PerfilSocioState extends State<PerfilSocio> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Perfil del Socio'),
+        foregroundColor: Colors.white,
+        title: Text('Perfil del Socio',style: TextStyle(color: Colors.indigo),),
+        centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.edit),
+            icon: Icon(Icons.edit,color: Colors.indigo,),
             onPressed: _cambiarFotoPerfil,
           )
         ],
       ),
-      body: socioLocal == null ? CircularProgressIndicator() : ListView(
-        children: <Widget>[
-          CircleAvatar(
-            backgroundImage: NetworkImage(socioLocal!.fotoPerfil),
-            radius: 60,
+      body: socioLocal == null ? CircularProgressIndicator() : Padding(
+        padding: const EdgeInsets.all(20),
+        child: ListView(
+          children: <Widget>[
+            CircleAvatar(
+              backgroundImage: NetworkImage(socioLocal!.fotoPerfil),
+              radius: 60,
+            ),
+            SizedBox(height: 20,),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Text('Nombre: ${socioLocal!.nombre}',style: TextStyle(fontSize: 18),),
           ),
-          ListTile(
-            title: Text('Nombre: ${socioLocal!.nombre}'),
-            subtitle: Text('Apellidos: ${socioLocal!.apellidos}'),
-          ),
-          ListTile(
-            title: Text('Correo: ${socioLocal!.correo}'),
-            subtitle: Text('Teléfono: ${socioLocal!.telefono}'),
-          ),
-          ElevatedButton(
-            onPressed: _cambiarFotoPerfil,
-            child: Text('Cambiar Foto'),
-          )
-        ],
+            SizedBox(height: 10,),
+           Padding(
+             padding: const EdgeInsets.all(10),
+             child: Text('Apellidos: ${socioLocal!.apellidos}',style: TextStyle(fontSize: 18)),
+           ),
+            SizedBox(height: 10,),
+           Padding(
+             padding: const EdgeInsets.all(10),
+             child: Text('Correo: ${socioLocal!.correo}',style: TextStyle(fontSize: 18)),
+           ),
+            SizedBox(height: 10,),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Text('Teléfono: ${socioLocal!.telefono}',style: TextStyle(fontSize: 18)),
+            ),
+            SizedBox(height: 20,),
+            ElevatedButton(
+              onPressed: _cambiarFotoPerfil,
+              child: Text('Cambiar Foto',style: TextStyle(fontSize: 18),),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.indigo), // Establece el color de fondo a índigo
+                foregroundColor: MaterialStateProperty.all(Colors.white), // Establece el color del texto a blanco
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0), // Añade bordes redondeados al botón
+                    )
+                ),
+                padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0)), // Añade padding interno
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

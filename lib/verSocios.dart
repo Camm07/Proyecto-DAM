@@ -13,6 +13,7 @@ class _LSociosState extends State<LSocios> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.transparent,
         title: Text("Listado de Socios",style: TextStyle(color: Colors.indigo,fontSize: 30)),
         centerTitle: true,
       ),

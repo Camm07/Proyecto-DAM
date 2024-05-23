@@ -18,6 +18,7 @@ class _AdminState extends State<InicioAdmin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
         title: Text("Bienvenido Admin",style: TextStyle(color: Colors.white),),
         centerTitle: true,
         backgroundColor: Colors.indigoAccent,

@@ -16,7 +16,9 @@ class _SolicitudesSState extends State<SolicitudesS> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Enviar Solicitud'),
+        foregroundColor: Colors.transparent,
+        title: Text('Enviar Solicitud',style: TextStyle(color: Colors.indigo),),
+        centerTitle: true,
       ),
       body: Padding(
         padding: EdgeInsets.all(20.0),

@@ -21,6 +21,7 @@ class _RSociosState extends State<RSocios> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.transparent,
         title: Text("Registrar Socio",style: TextStyle(color: Colors.indigo,fontSize: 30),),
         centerTitle: true,
       ),
