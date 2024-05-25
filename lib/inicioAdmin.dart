@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:proyecto_dam/ServiciosRemotos.dart';
 import 'package:proyecto_dam/main.dart';
 import 'package:proyecto_dam/registroSocios.dart';
+import 'package:proyecto_dam/verReservacionesAdmin.dart';
 import 'package:proyecto_dam/verSocios.dart';
 
 
@@ -75,7 +76,7 @@ class _AdminState extends State<InicioAdmin> {
       case 2: return RSocios();
       case 3: return LSocios();
       case 4: return Solicitud();
-      case 5: return Reservacion();
+      case 5: return VerReservaciones();
       default:
         return Inicio();
     }

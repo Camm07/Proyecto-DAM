@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:proyecto_dam/ServiciosFirebaseySQFlite.dart';
-import 'package:proyecto_dam/reservacion.dart';
-  // Asumiendo que así has llamado al archivo que contiene DatabaseService y Reservacion
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class ReservacionS extends StatefulWidget {
+class ReservacionSocio extends StatefulWidget {
   @override
-  _ReservacionSState createState() => _ReservacionSState();
+  _ReservacionSocioState createState() => _ReservacionSocioState();
 }
 
-class _ReservacionSState extends State<ReservacionS> {
+class _ReservacionSocioState extends State<ReservacionSocio> {
   final TextEditingController _fechaController = TextEditingController();
   final TextEditingController _espacioController = TextEditingController();
-  final DatabaseService _databaseService = DatabaseService();  // Asegúrate que este servicio está bien configurado
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hacer una Reservación'),
+        title: Text('Reservación del Socio'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -47,13 +47,28 @@ class _ReservacionSState extends State<ReservacionS> {
                 }
               },
             ),
-            TextField(
-              controller: _espacioController,
+            DropdownButtonFormField<String>(
+              value: null,
+              items: <String>[
+                'Cancha de tenis',
+                'Salón de eventos',
+                'Piscina'
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
               decoration: InputDecoration(labelText: 'Espacio a reservar'),
+              onChanged: (String? newValue) {
+                setState(() {
+                  _espacioController.text = newValue!;
+                });
+              },
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => _attemptReservation(),
+              onPressed: _attemptReservation,
               child: Text('Reservar'),
               style: ElevatedButton.styleFrom(
                 primary: Theme.of(context).primaryColor,
@@ -67,39 +82,37 @@ class _ReservacionSState extends State<ReservacionS> {
 
   void _attemptReservation() async {
     if (_fechaController.text.isNotEmpty && _espacioController.text.isNotEmpty) {
-      Reservacion nuevaReservacion = Reservacion(
-        idSocio: 'ID_DEL_SOCIO',  // Este ID debería ser obtenido dinámicamente o pasado al widget
-        espacio: _espacioController.text,
-        fechaReservacion: DateTime.parse(_fechaController.text),
-        fechaHoraSolicitud: DateTime.now(),  // Fecha actual como fecha de solicitud
-      );
+      User? user = _auth.currentUser;
+      if (user == null) {
+        _showMessage('Error al enviar la reserva: Usuario no autenticado');
+        return;
+      }
+
+      String? socioId = user.uid;
+      String espacio = _espacioController.text;
+      DateTime fechaReservacion = DateTime.parse(_fechaController.text);
+
       try {
-        await _databaseService.addReservacion(nuevaReservacion);
-        _showDialog('Reservación Exitosa', 'Tu reservación ha sido guardada con éxito.');
-        _fechaController.clear();
-        _espacioController.clear();
-      } catch (e) {
-        _showDialog('Error', 'Hubo un problema al guardar tu reservación.');
+        await _firestore.collection('Coleccion_Reservacion').add({
+          'Id_Socio': socioId,
+          'Espacio': espacio,
+          'Fecha_Reservacion': fechaReservacion,
+          'Fecha_Hora_Solicitud': Timestamp.now(),
+          'Comentario': "",
+          'Estatus': "Pendiente",
+        });
+        _showMessage('Tu reserva fue enviada exitosamente.');
+      } catch (error) {
+        _showMessage('Error al enviar la reserva: $error');
       }
     } else {
-      _showDialog('Error', 'Por favor completa todos los campos requeridos.');
+      _showMessage('Por favor completa todos los campos requeridos.');
     }
   }
 
-  void _showDialog(String title, String content) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(content),
-        actions: <Widget>[
-          TextButton(
-            child: Text('OK'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
     );
   }
 }
-

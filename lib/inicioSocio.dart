@@ -36,7 +36,6 @@ class _InicioSocioState extends State<InicioSocio> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         title: Text("SOCIO", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: Colors.indigoAccent,
@@ -90,7 +89,7 @@ class _InicioSocioState extends State<InicioSocio> {
       case 3:
         return SolicitudesS();
       case 4:
-        return ReservacionS();
+        return ReservacionSocio();  // Pantalla de reservaciones
       default:
         return Inicio();
     }
@@ -108,14 +107,13 @@ class _InicioSocioState extends State<InicioSocio> {
           Navigator.pop(context);
         }
       },
-      leading: Expanded(child: Icon(icon, color: Colors.indigoAccent),),
-      title: Expanded(child: Text(text), flex: 2,),
+      leading: Icon(icon, color: Colors.indigoAccent),
+      title: Text(text),
     );
   }
 
   Widget Inicio() => Center(child: Text('Bienvenido, ${socioActual?.nombre ?? "Socio"}', style: TextStyle(fontSize: 24)));
-  Widget Solicitud() => Center(child: Text('Página de Solicitudes'));
-  Widget Reservacion() => Center(child: Text('Página de Reservaciones'));
+  Widget SolicitudesS() => Center(child: Text('Página de Solicitudes'));
 
   void mostrarDialogoCerrarSesion() {
     showDialog(
@@ -143,4 +141,3 @@ class _InicioSocioState extends State<InicioSocio> {
     );
   }
 }
-

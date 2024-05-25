@@ -4,6 +4,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:proyecto_dam/ServiciosRemotos.dart';
 import 'package:proyecto_dam/inicioAdmin.dart';
 import 'package:proyecto_dam/inicioSocio.dart';
+import 'package:proyecto_dam/reservacionSocio.dart';
+import 'package:proyecto_dam/verReservacionesAdmin.dart';
+
 import 'firebase_options.dart';
 
 void main() async {
@@ -17,6 +20,8 @@ void main() async {
     routes: {
       '/admin': (context) => InicioAdmin(),
       '/socio': (context) => InicioSocio(),
+      '/reservacion': (context) => ReservacionSocio(), //Nueva Ruta
+      'ver_reservaciones': (context) => VerReservaciones(),
     },
   ));
 }
