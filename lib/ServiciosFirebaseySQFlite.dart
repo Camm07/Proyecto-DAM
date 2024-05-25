@@ -70,9 +70,13 @@ class DatabaseService {
     final db = await database;
     await db.insert('Solicitudes', solicitud.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
+
+  Future<List<Solicitud>> getSolicitudes() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('Solicitudes');
+
+    return List.generate(maps.length, (i) {
+      return Solicitud.fromMap(maps[i], maps[i]['id'].toString());
+    });
+  }
 }
-
-
-
-
-

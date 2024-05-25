@@ -31,7 +31,7 @@ class Solicitud {
       idSocio: map['idSocio'],
       descripcion: map['descripcion'],
       fechaHoraAtendida: DateTime.parse(map['fechaHoraAtendida']),
-      estatus: map['estatus'] ?? "Pendiente", // Valor por defecto en caso de que no esté definido
+      estatus: map['estatus'] ?? "Pendiente",
       comentario: map['comentario'] ?? "",
     );
   }

@@ -4,6 +4,7 @@ import 'package:proyecto_dam/main.dart';
 import 'package:proyecto_dam/registroSocios.dart';
 import 'package:proyecto_dam/verReservacionesAdmin.dart';
 import 'package:proyecto_dam/verSocios.dart';
+import 'package:proyecto_dam/verSolicitudAdmin.dart';
 
 
 class InicioAdmin extends StatefulWidget {
@@ -75,7 +76,7 @@ class _AdminState extends State<InicioAdmin> {
       case 1: return Inicio();
       case 2: return RSocios();
       case 3: return LSocios();
-      case 4: return Solicitud();
+      case 4: return VerSolicitudes();
       case 5: return VerReservaciones();
       default:
         return Inicio();

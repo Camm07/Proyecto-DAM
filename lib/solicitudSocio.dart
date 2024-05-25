@@ -1,48 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:proyecto_dam/ServiciosFirebaseySQFlite.dart';
-import 'package:proyecto_dam/solicitud.dart';  // Asumiendo que tienes un modelo de datos para solicitudes
+import 'package:proyecto_dam/solicitud.dart';
+import 'ServiciosFirebaseySQFlite.dart';
 
-class SolicitudesS extends StatefulWidget {
+class SolicitudSocio extends StatefulWidget {
   @override
-  _SolicitudesSState createState() => _SolicitudesSState();
+  _SolicitudSocioState createState() => _SolicitudSocioState();
 }
 
-class _SolicitudesSState extends State<SolicitudesS> {
+class _SolicitudSocioState extends State<SolicitudSocio> {
   final TextEditingController _descripcionController = TextEditingController();
-  final DatabaseService _databaseService = DatabaseService();  // Asegúrate que este servicio está bien configurado
+  final DatabaseService _databaseService = DatabaseService();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        foregroundColor: Colors.transparent,
-        title: Text('Enviar Solicitud',style: TextStyle(color: Colors.indigo),),
-        centerTitle: true,
+        title: Text('Solicitud del Socio'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
+          children: [
             TextField(
               controller: _descripcionController,
               decoration: InputDecoration(
-                labelText: 'Descripción de la Solicitud',
-                suffixIcon: Icon(Icons.description),
+                labelText: 'Describe su solicitud aquí',
               ),
-              maxLines: 3,
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => _attemptSendSolicitud(),
+              onPressed: _enviarSolicitud,
               child: Text('Enviar Solicitud'),
-              style: ElevatedButton.styleFrom(
-                primary: Theme.of(context).primaryColor,
-              ),
             ),
+            SizedBox(height: 20),
             Expanded(
-              child: _buildSolicitudesList(),
+              child: _buildListaSolicitudes(),
             ),
           ],
         ),
@@ -50,44 +43,59 @@ class _SolicitudesSState extends State<SolicitudesS> {
     );
   }
 
-  void _attemptSendSolicitud() async {
-    if (_descripcionController.text.isNotEmpty) {
-      Solicitud nuevaSolicitud = Solicitud(
-        idSocio: 'ID_DEL_SOCIO',  // Este ID debería ser obtenido dinámicamente o pasado al widget
-        descripcion: _descripcionController.text,
-        fechaHoraAtendida: DateTime.now(),  // Fecha actual como fecha de solicitud
-      );
-      try {
-        await _databaseService.addSolicitud(nuevaSolicitud);
-        _showDialog('Solicitud Enviada', 'Tu solicitud ha sido enviada con éxito.');
-        _descripcionController.clear();
-      } catch (e) {
-        _showDialog('Error', 'Hubo un problema al enviar tu solicitud.');
-      }
-    } else {
-      _showDialog('Error', 'Por favor completa el campo de descripción.');
+  void _enviarSolicitud() async {
+    if (_descripcionController.text.isEmpty) {
+      return;
     }
+
+    Solicitud nuevaSolicitud = Solicitud(
+      idSocio: 'dummy_idSocio',  // Aquí deberías usar el idSocio real del usuario
+      descripcion: _descripcionController.text,
+      fechaHoraAtendida: DateTime.now(),
+      estatus: 'Pendiente',
+    );
+
+    await _databaseService.addSolicitud(nuevaSolicitud);
+
+    _descripcionController.clear();
+
+    setState(() {}); // Refrescar la lista
   }
 
-  Widget _buildSolicitudesList() {
-    // Este método debería implementarse para mostrar la lista de solicitudes existentes
-    // Similar al método utilizado en la página de reservaciones
-    return Container();  // Placeholder para la implementación real
-  }
+  Widget _buildListaSolicitudes() {
+    return FutureBuilder<List<Solicitud>>(
+      future: _databaseService.getSolicitudes(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        }
 
-  void _showDialog(String title, String content) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(content),
-        actions: <Widget>[
-          TextButton(
-            child: Text('OK'),
-            onPressed: () => Navigator.of(context).pop(),
+        List<Solicitud> solicitudes = snapshot.data!;
+
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: DataTable(
+            columns: [
+              DataColumn(label: Text('Fecha')),
+              DataColumn(label: Text('Estatus')),
+              DataColumn(label: Text('ID Solicitud')),
+              DataColumn(label: Text('Descripción')),
+              DataColumn(label: Text('Comentario')),
+            ],
+            rows: solicitudes.map((Solicitud solicitud) {
+              return DataRow(
+                cells: [
+                  DataCell(Text(DateFormat('yyyy-MM-dd HH:mm:ss').format(solicitud.fechaHoraAtendida))),
+                  DataCell(Text(solicitud.estatus)),
+                  DataCell(Text(solicitud.id)),
+                  DataCell(Text(solicitud.descripcion)),
+                  DataCell(Text(solicitud.comentario)),
+                ],
+              );
+            }).toList(),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

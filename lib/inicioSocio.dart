@@ -6,6 +6,7 @@ import 'package:proyecto_dam/reservacionSocio.dart';
 import 'package:proyecto_dam/socio.dart';
 import 'package:proyecto_dam/SocioDB.dart';
 import 'package:proyecto_dam/solicitudSocio.dart';
+import 'package:proyecto_dam/verSolicitudAdmin.dart';
 
 class InicioSocio extends StatefulWidget {
   const InicioSocio({super.key});
@@ -87,7 +88,7 @@ class _InicioSocioState extends State<InicioSocio> {
       case 2:
         return socioActual != null ? PerfilSocio(socio: socioActual) : CircularProgressIndicator();
       case 3:
-        return SolicitudesS();
+        return SolicitudSocio();
       case 4:
         return ReservacionSocio();  // Pantalla de reservaciones
       default:
