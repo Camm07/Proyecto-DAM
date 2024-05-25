@@ -21,7 +21,7 @@ void main() async {
       '/admin': (context) => InicioAdmin(),
       '/socio': (context) => InicioSocio(),
       '/reservacion': (context) => ReservacionSocio(), //Nueva Ruta
-      'ver_reservaciones': (context) => VerReservaciones(),
+      '/ver_reservaciones': (context) => VerReservaciones(),
     },
   ));
 }

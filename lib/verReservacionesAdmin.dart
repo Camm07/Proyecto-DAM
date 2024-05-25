@@ -90,8 +90,8 @@ class _VerReservacionesState extends State<VerReservaciones> {
               return DataRow(
                 cells: [
                   DataCell(Text(document.id)),
-                  DataCell(FutureBuilder<QuerySnapshot>(
-                    future: _firestore.collection('Socios').where('uid', isEqualTo: data['Id_Socio']).get(),
+                  DataCell(FutureBuilder<DocumentSnapshot>(
+                    future: _firestore.collection('Socios').doc(data['Id_Socio']).get(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Text('Cargando...');
@@ -100,12 +100,13 @@ class _VerReservacionesState extends State<VerReservaciones> {
                         print('Error al obtener los datos del socio: ${snapshot.error}');
                         return Text('Error');
                       }
-                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      if (!snapshot.hasData || !snapshot.data!.exists) {
                         print('El documento del socio con ID ${data['Id_Socio']} no existe o no tiene datos');
                         return Text('Nombre no disponible');
                       }
-                      var socioData = snapshot.data!.docs.first.data() as Map<String, dynamic>;
+                      var socioData = snapshot.data!.data() as Map<String, dynamic>;
                       if (socioData.containsKey('nombre') && socioData.containsKey('apellidos')) {
+                        print('Datos del socio obtenidos: ${socioData['nombre']} ${socioData['apellidos']}');
                         return Text('${socioData['nombre']} ${socioData['apellidos']}');
                       } else {
                         print('El documento del socio no tiene los campos "nombre" o "apellidos"');
