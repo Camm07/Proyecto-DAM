@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ReservacionSocio extends StatefulWidget {
   @override
@@ -82,21 +83,27 @@ class _ReservacionSocioState extends State<ReservacionSocio> {
 
   void _attemptReservation() async {
     if (_fechaController.text.isNotEmpty && _espacioController.text.isNotEmpty) {
-      User? user = _auth.currentUser;
-      if (user == null) {
-        _showMessage('Error al enviar la reserva: Usuario no autenticado');
-        return;
-      }
-
-      String? socioId = user.uid;
-      String espacio = _espacioController.text;
-      DateTime fechaReservacion = DateTime.parse(_fechaController.text);
-
       try {
+        // Recuperar el ID del documento del socio de SharedPreferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? socioId = prefs.getString('socioId');
+
+        if (socioId == null) {
+          _showMessage('Error al enviar la reserva: ID del Socio no disponible');
+          return;
+        }
+
+        String espacio = _espacioController.text;
+        DateTime fechaReservacion = DateTime.parse(_fechaController.text);
+
+        // Convertir DateTime a una cadena en formato ISO para Firestore
+        String fechaReservacionISO = DateFormat('yyyy-MM-dd').format(fechaReservacion);
+
+        // Realizar la reserva con el ID del documento del socio
         await _firestore.collection('Coleccion_Reservacion').add({
           'Id_Socio': socioId,
           'Espacio': espacio,
-          'Fecha_Reservacion': fechaReservacion,
+          'Fecha_Reservacion': fechaReservacionISO,  // Guardar como cadena en formato ISO
           'Fecha_Hora_Solicitud': Timestamp.now(),
           'Comentario': "",
           'Estatus': "Pendiente",
@@ -109,6 +116,10 @@ class _ReservacionSocioState extends State<ReservacionSocio> {
       _showMessage('Por favor completa todos los campos requeridos.');
     }
   }
+
+
+
+
 
   void _showMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
