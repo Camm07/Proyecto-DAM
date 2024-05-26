@@ -148,6 +148,7 @@ class _MyAppState extends State<MyApp> {
   Widget autenticar() {
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.white,
         title: Text('Club Deportivo del Valle',style: TextStyle(color: Colors.white),),
         centerTitle: true,
         backgroundColor: Colors.indigo,
@@ -155,44 +156,48 @@ class _MyAppState extends State<MyApp> {
           Image.asset("assets/logoclub.png")
         ],
       ),
-      body: Material( // Añadir el widget Material aquí
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.all(40),
-            child: Column(
-              children: [
-                Text("INICIAR SESIÓN", style: TextStyle(color: Colors.indigo, fontSize: 25)),
-                SizedBox(height: 40),
-                TextField(
-                  controller: email,
-                  decoration: InputDecoration(labelText: "Correo:",
-                  suffixIcon: Icon(CupertinoIcons.person)),
-                ),
-                SizedBox(height: 20),
-                TextField(
-                  controller: password,
-                  obscureText: true,
-                  decoration: InputDecoration(labelText: "Contraseña:",
-                      suffixIcon: Icon(CupertinoIcons.padlock)),
-                ),
-                SizedBox(height: 40),
-                ElevatedButton(
-                  onPressed: handleLogin,
-                  child: Text("AUTENTICAR"),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.indigo), // Establece el color de fondo a índigo
-                    foregroundColor: MaterialStateProperty.all(Colors.white), // Establece el color del texto a blanco
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0), // Añade bordes redondeados al botón
-                        )
-                    ),
-                    padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0)), // Añade padding interno
+      body: SingleChildScrollView(
+        child: Material( // Añadir el widget Material aquí
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.all(40),
+              child: Column(
+                children: [
+                  Text("INICIAR SESIÓN", style: TextStyle(color: Colors.indigo, fontSize: 25)),
+                  SizedBox(height: 40),
+                  Image.asset("assets/logoinicio.png",width: 200,height: 200,),
+                  SizedBox(height: 40,),
+                  TextField(
+                    controller: email,
+                    decoration: InputDecoration(labelText: "Correo:",
+                        suffixIcon: Icon(CupertinoIcons.person,color: Colors.indigo,)),
                   ),
-                )
+                  SizedBox(height: 20),
+                  TextField(
+                    controller: password,
+                    obscureText: true,
+                    decoration: InputDecoration(labelText: "Contraseña:",
+                        suffixIcon: Icon(CupertinoIcons.padlock,color: Colors.indigo,)),
+                  ),
+                  SizedBox(height: 40),
+                  ElevatedButton(
+                    onPressed: handleLogin,
+                    child: Text("AUTENTICAR"),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.indigo), // Establece el color de fondo a índigo
+                      foregroundColor: MaterialStateProperty.all(Colors.white), // Establece el color del texto a blanco
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0), // Añade bordes redondeados al botón
+                          )
+                      ),
+                      padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0)), // Añade padding interno
+                    ),
+                  )
 
 
-              ],
+                ],
+              ),
             ),
           ),
         ),

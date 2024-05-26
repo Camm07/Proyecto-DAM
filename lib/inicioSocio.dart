@@ -37,6 +37,7 @@ class _InicioSocioState extends State<InicioSocio> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.white,
         title: Text("SOCIO", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: Colors.indigoAccent,
@@ -70,10 +71,15 @@ class _InicioSocioState extends State<InicioSocio> {
                 ],
               ),
             ),
+            SizedBox(height: 30,),
             buildDrawerItem(Icons.home, "Inicio", 1),
+            SizedBox(height: 20,),
             buildDrawerItem(Icons.person, "Perfil", 2),
+            SizedBox(height: 20,),
             buildDrawerItem(Icons.email, "Solicitud", 3),
+            SizedBox(height: 20,),
             buildDrawerItem(Icons.calendar_month, "Reservación", 4),
+            SizedBox(height: 20,),
             buildDrawerItem(Icons.output, "Cerrar Sesión", 5),
           ],
         ),
@@ -108,12 +114,15 @@ class _InicioSocioState extends State<InicioSocio> {
           Navigator.pop(context);
         }
       },
-      leading: Icon(icon, color: Colors.indigoAccent),
-      title: Text(text),
+      leading: Expanded(child: Icon(icon, color: Colors.indigoAccent),),
+      title: Expanded(child: Text(text,style: TextStyle(fontSize: 20),),flex: 2,),
     );
   }
 
   Widget Inicio() => Center(child: Text('Bienvenido, ${socioActual?.nombre ?? "Socio"}', style: TextStyle(fontSize: 24)));
+
+
+
   Widget SolicitudesS() => Center(child: Text('Página de Solicitudes'));
 
   void mostrarDialogoCerrarSesion() {

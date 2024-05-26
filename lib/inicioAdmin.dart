@@ -20,7 +20,7 @@ class _AdminState extends State<InicioAdmin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
+        foregroundColor: Colors.white,
         title: Text("Bienvenido Admin",style: TextStyle(color: Colors.white),),
         centerTitle: true,
         backgroundColor: Colors.indigoAccent,
@@ -62,9 +62,9 @@ class _AdminState extends State<InicioAdmin> {
             SizedBox(height: 20,),
             itemDrawer(4,Icons.email,"Solicitud",Colors.indigoAccent),
             SizedBox(height: 20,),
-            itemDrawer(5,Icons.calendar_month,"Reservacion",Colors.indigoAccent),
+            itemDrawer(5,Icons.calendar_month,"Reservación",Colors.indigoAccent),
             SizedBox(height: 20,),
-            itemDrawer(6,Icons.output,"Cerrar Sesion",Colors.indigoAccent),
+            itemDrawer(6,Icons.output,"Cerrar Sesión",Colors.indigoAccent),
           ],
         ),
       ),

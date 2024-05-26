@@ -19,7 +19,8 @@ class _ReservacionSocioState extends State<ReservacionSocio> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reservación del Socio'),
+        foregroundColor: Colors.transparent,
+        title: Text('Reservación del Socio',style: TextStyle(color: Colors.indigo,fontSize: 25),),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20.0),
@@ -70,7 +71,7 @@ class _ReservacionSocioState extends State<ReservacionSocio> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: _attemptReservation,
-              child: Text('Reservar'),
+              child: Text("Reservar",style: TextStyle(color: Colors.white),),
               style: ElevatedButton.styleFrom(
                 primary: Theme.of(context).primaryColor,
               ),
