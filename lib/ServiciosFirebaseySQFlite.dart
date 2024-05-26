@@ -8,7 +8,6 @@ class DatabaseService {
   static Database? _database;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  // Inicializar la base de datos SQLite
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await initDB();
@@ -18,51 +17,38 @@ class DatabaseService {
   Future<Database> initDB() async {
     String path = join(await getDatabasesPath(), 'club_del_valle.db');
     return await openDatabase(path, version: 1, onCreate: (db, version) async {
-      await db.execute('''
-        CREATE TABLE Reservaciones (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          idSocio TEXT,
-          espacio TEXT,
-          fechaReservacion TEXT,
-          fechaHoraSolicitud TEXT,
-          estatus TEXT DEFAULT 'Pendiente',
-          comentario TEXT DEFAULT ''
-        );
-      ''');
-      await db.execute('''
-        CREATE TABLE Solicitudes (
-          id TEXT PRIMARY KEY,
-          idSocio TEXT,
-          descripcion TEXT,
-          fechaHoraAtendida TEXT,
-          estatus TEXT DEFAULT 'Pendiente',
-          comentario TEXT DEFAULT ''
-        );
-      ''');
+      await db.execute(
+          'CREATE TABLE Reservaciones ('
+              'id INTEGER PRIMARY KEY AUTOINCREMENT,'
+              'idSocio TEXT,'
+              'espacio TEXT,'
+              'fechaReservacion TEXT,'
+              'fechaHoraSolicitud TEXT,'
+              'estatus TEXT DEFAULT "Pendiente",'
+              'comentario TEXT DEFAULT ""'
+              ');'
+      );
+      await db.execute(
+          'CREATE TABLE Solicitudes ('
+              'id TEXT PRIMARY KEY,'
+              'idSocio TEXT,'
+              'descripcion TEXT,'
+              'fechaHoraAtendida TEXT,'
+              'estatus TEXT DEFAULT "Pendiente",'
+              'comentario TEXT DEFAULT ""'
+              ');'
+      );
     });
   }
 
-  Future<void> addReservacion(Reservacion reservacion) async {
-    await addReservacionToFirestore(reservacion);
-    await addReservacionToLocalDB(reservacion);
-  }
-
   Future<void> addSolicitud(Solicitud solicitud) async {
-    await addSolicitudToFirestore(solicitud);
-    await addSolicitudToLocalDB(solicitud);
-  }
-
-  Future<void> addReservacionToFirestore(Reservacion reservacion) async {
-    await firestore.collection('Coleccion_Reservacion').add(reservacion.toMap());
-  }
-
-  Future<void> addReservacionToLocalDB(Reservacion reservacion) async {
-    final db = await database;
-    await db.insert('Reservaciones', reservacion.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
-  }
-
-  Future<void> addSolicitudToFirestore(Solicitud solicitud) async {
-    await firestore.collection('Coleccion_Solicitud').add(solicitud.toMap());
+    try {
+      DocumentReference docRef = await firestore.collection('Coleccion_Solicitud').add(solicitud.toMap());
+      solicitud.id = docRef.id;
+      await addSolicitudToLocalDB(solicitud);
+    } catch (e) {
+      print('Error al agregar solicitud a Firestore: $e');
+    }
   }
 
   Future<void> addSolicitudToLocalDB(Solicitud solicitud) async {
@@ -70,31 +56,24 @@ class DatabaseService {
     await db.insert('Solicitudes', solicitud.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  Stream<QuerySnapshot> getSolicitudesStream(String idSocio) {
+    return firestore.collection('Coleccion_Solicitud')
+        .where('Id_Socio', isEqualTo: idSocio)
+        .snapshots();
+  }
+
   Future<void> updateSolicitud(Solicitud solicitud) async {
-    await updateSolicitudInFirestore(solicitud);
-    await updateSolicitudInLocalDB(solicitud);
-  }
-
-  Future<void> updateSolicitudInFirestore(Solicitud solicitud) async {
-    await firestore.collection('Coleccion_Solicitud').doc(solicitud.id).update(solicitud.toMap());
-  }
-
-  Future<void> updateSolicitudInLocalDB(Solicitud solicitud) async {
-    final db = await database;
-    await db.update(
-      'Solicitudes',
-      solicitud.toMap(),
-      where: 'id = ?',
-      whereArgs: [solicitud.id],
-    );
-  }
-
-  Future<List<Solicitud>> getSolicitudes() async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('Solicitudes');
-
-    return List.generate(maps.length, (i) {
-      return Solicitud.fromMap(maps[i], maps[i]['id'].toString());
-    });
+    try {
+      await firestore.collection('Coleccion_Solicitud').doc(solicitud.id).update(solicitud.toMap());
+      final db = await database;
+      await db.update(
+        'Solicitudes',
+        solicitud.toMap(),
+        where: 'id = ?',
+        whereArgs: [solicitud.id],
+      );
+    } catch (e) {
+      print('Error al actualizar la solicitud: $e');
+    }
   }
 }

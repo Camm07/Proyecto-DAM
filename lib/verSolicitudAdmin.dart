@@ -59,9 +59,9 @@ class _VerSolicitudesState extends State<VerSolicitudes> {
   }
 
   Widget _buildListaSolicitudes() {
-    Query query = _firestore.collection('Coleccion_Solicitud').orderBy('fechaHoraAtendida', descending: true);
+    Query query = _firestore.collection('Coleccion_Solicitud').orderBy('Fecha_Hora_Atendida', descending: true);
     if (_filtroEstatus != 'Todos') {
-      query = query.where('estatus', isEqualTo: _filtroEstatus);
+      query = query.where('Estatus', isEqualTo: _filtroEstatus);
     }
 
     return StreamBuilder<QuerySnapshot>(
@@ -94,7 +94,7 @@ class _VerSolicitudesState extends State<VerSolicitudes> {
                 cells: [
                   DataCell(Text(document.id)),
                   DataCell(FutureBuilder<DocumentSnapshot>(
-                    future: _firestore.collection('Socios').doc(data['idSocio']).get(),
+                    future: _firestore.collection('Socios').doc(data['Id_Socio']).get(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Text('Cargando...');
@@ -109,10 +109,10 @@ class _VerSolicitudesState extends State<VerSolicitudes> {
                       return Text('${socioData['nombre']} ${socioData['apellidos']}');
                     },
                   )),
-                  DataCell(Text(data['descripcion'])),
-                  DataCell(Text(_formatDate(data['fechaHoraAtendida']))),
-                  DataCell(Text(data['idSocio'])),
-                  DataCell(Text(data['estatus'])),
+                  DataCell(Text(data['Descripcion'])),
+                  DataCell(Text(_formatDate(data['Fecha_Hora_Atendida']))),
+                  DataCell(Text(data['Id_Socio'])),
+                  DataCell(Text(data['Estatus'])),
                   DataCell(ElevatedButton(
                     onPressed: () {
                       _showAtenderDialog(context, document.id, data);
@@ -151,9 +151,9 @@ class _VerSolicitudesState extends State<VerSolicitudes> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text('ID Solicitud: $idSolicitud'),
-              Text('ID Socio: ${data['idSocio']}'),
-              Text('Descripción: ${data['descripcion']}'),
-              Text('Fecha/Hora: ${_formatDate(data['fechaHoraAtendida'])}'),
+              Text('ID Socio: ${data['Id_Socio']}'),
+              Text('Descripción: ${data['Descripcion']}'),
+              Text('Fecha/Hora: ${_formatDate(data['Fecha_Hora_Atendida'])}'),
               TextField(
                 controller: _commentController,
                 decoration: InputDecoration(labelText: 'Escribe un comentario'),
@@ -191,8 +191,8 @@ class _VerSolicitudesState extends State<VerSolicitudes> {
     try {
       Solicitud solicitud = Solicitud(
         id: idSolicitud,
-        idSocio: data['idSocio'],
-        descripcion: data['descripcion'],
+        idSocio: data['Id_Socio'],
+        descripcion: data['Descripcion'],
         fechaHoraAtendida: DateTime.now(),
         estatus: newStatus,
         comentario: comment,

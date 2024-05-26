@@ -1,5 +1,5 @@
 class Reservacion {
-  final String id;
+  String id;
   final String idSocio;
   final String espacio;
   final DateTime fechaReservacion;

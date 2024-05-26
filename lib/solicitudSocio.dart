@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:proyecto_dam/solicitud.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'ServiciosFirebaseySQFlite.dart';
+import 'package:proyecto_dam/solicitud.dart';
 
 class SolicitudSocio extends StatefulWidget {
   @override
@@ -44,58 +46,72 @@ class _SolicitudSocioState extends State<SolicitudSocio> {
   }
 
   void _enviarSolicitud() async {
+    String? idSocio = await _obtenerIdSocioActual();
+    if (idSocio == null) {
+      _showMessage('Error: No se ha podido identificar al socio.');
+      return;
+    }
+
     if (_descripcionController.text.isEmpty) {
+      _showMessage('Por favor, ingrese una descripción para la solicitud.');
       return;
     }
 
     Solicitud nuevaSolicitud = Solicitud(
-      idSocio: 'dummy_idSocio',  // Aquí deberías usar el idSocio real del usuario
+      idSocio: idSocio,
       descripcion: _descripcionController.text,
-      fechaHoraAtendida: DateTime.now(),
+      fechaHoraAtendida: DateTime.now(), // Usa la hora local para consistencia con tu sistema web
       estatus: 'Pendiente',
     );
 
     await _databaseService.addSolicitud(nuevaSolicitud);
-
     _descripcionController.clear();
-
-    setState(() {}); // Refrescar la lista
+    setState(() {});
+    _showMessage('Solicitud enviada con éxito.');
   }
 
   Widget _buildListaSolicitudes() {
-    return FutureBuilder<List<Solicitud>>(
-      future: _databaseService.getSolicitudes(),
+    return FutureBuilder<String?>(
+      future: _obtenerIdSocioActual(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
+        if (!snapshot.hasData || snapshot.data == null) {
+          return Center(child: Text('No se pudo obtener el ID del socio.'));
         }
-
-        List<Solicitud> solicitudes = snapshot.data!;
-
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: DataTable(
-            columns: [
-              DataColumn(label: Text('Fecha')),
-              DataColumn(label: Text('Estatus')),
-              DataColumn(label: Text('ID Solicitud')),
-              DataColumn(label: Text('Descripción')),
-              DataColumn(label: Text('Comentario')),
-            ],
-            rows: solicitudes.map((Solicitud solicitud) {
-              return DataRow(
-                cells: [
-                  DataCell(Text(DateFormat('yyyy-MM-dd HH:mm:ss').format(solicitud.fechaHoraAtendida))),
-                  DataCell(Text(solicitud.estatus)),
-                  DataCell(Text(solicitud.id)),
-                  DataCell(Text(solicitud.descripcion)),
-                  DataCell(Text(solicitud.comentario)),
-                ],
-              );
-            }).toList(),
-          ),
+        return StreamBuilder<QuerySnapshot>(
+          stream: _databaseService.getSolicitudesStream(snapshot.data!),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+            if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+            var docs = snapshot.data!.docs;
+            return ListView(
+              children: docs.map((doc) {
+                var data = doc.data() as Map<String, dynamic>;
+                DateTime fechaHora = data['Fecha_Hora_Atendida'] is Timestamp
+                    ? (data['Fecha_Hora_Atendida'] as Timestamp).toDate()
+                    : DateTime.parse(data['Fecha_Hora_Atendida']);
+                return ListTile(
+                  title: Text(data['Descripcion']),
+                  subtitle: Text(DateFormat('yyyy-MM-dd HH:mm:ss').format(fechaHora)),
+                  trailing: Text(data['Estatus']),
+                );
+              }).toList(),
+            );
+          },
         );
       },
     );
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<String?> _obtenerIdSocioActual() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('socioId');
   }
 }

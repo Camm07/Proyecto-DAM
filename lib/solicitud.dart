@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Solicitud {
-  final String id;
+  String id;
   final String idSocio;
   final String descripcion;
-  final DateTime fechaHoraAtendida;
+  DateTime fechaHoraAtendida;
   final String estatus;
   final String comentario;
 
@@ -17,22 +19,36 @@ class Solicitud {
 
   Map<String, dynamic> toMap() {
     return {
-      'idSocio': idSocio,
-      'descripcion': descripcion,
-      'fechaHoraAtendida': fechaHoraAtendida.toIso8601String(),
-      'estatus': estatus,
-      'comentario': comentario,
+      'Id_Socio': idSocio,
+      'Descripcion': descripcion,
+      'Fecha_Hora_Atendida': Timestamp.fromDate(fechaHoraAtendida),
+      'Estatus': estatus,
+      'Comentario': comentario,
     };
+  }
+
+  factory Solicitud.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return Solicitud(
+      id: doc.id,
+      idSocio: data['Id_Socio'] ?? '',
+      descripcion: data['Descripcion'] ?? '',
+      fechaHoraAtendida: data['Fecha_Hora_Atendida'] is Timestamp ? (data['Fecha_Hora_Atendida'] as Timestamp).toDate() : DateTime.parse(data['Fecha_Hora_Atendida']),
+      estatus: data['Estatus'] ?? 'Pendiente',
+      comentario: data['Comentario'] ?? '',
+    );
   }
 
   factory Solicitud.fromMap(Map<String, dynamic> map, String id) {
     return Solicitud(
       id: id,
-      idSocio: map['idSocio'],
-      descripcion: map['descripcion'],
-      fechaHoraAtendida: DateTime.parse(map['fechaHoraAtendida']),
-      estatus: map['estatus'] ?? "Pendiente",
-      comentario: map['comentario'] ?? "",
+      idSocio: map['Id_Socio'] ?? '',
+      descripcion: map['Descripcion'] ?? '',
+      fechaHoraAtendida: DateTime.parse(map['Fecha_Hora_Atendida']),
+      estatus: map['Estatus'] ?? 'Pendiente',
+      comentario: map['Comentario'] ?? '',
     );
   }
 }
+
+
