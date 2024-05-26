@@ -3,7 +3,6 @@ import 'package:proyecto_dam/reservacion.dart';
 import 'package:proyecto_dam/solicitud.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:intl/intl.dart';
 
 class DatabaseService {
   static Database? _database;
@@ -32,7 +31,7 @@ class DatabaseService {
       ''');
       await db.execute('''
         CREATE TABLE Solicitudes (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          id TEXT PRIMARY KEY,
           idSocio TEXT,
           descripcion TEXT,
           fechaHoraAtendida TEXT,
@@ -69,6 +68,25 @@ class DatabaseService {
   Future<void> addSolicitudToLocalDB(Solicitud solicitud) async {
     final db = await database;
     await db.insert('Solicitudes', solicitud.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<void> updateSolicitud(Solicitud solicitud) async {
+    await updateSolicitudInFirestore(solicitud);
+    await updateSolicitudInLocalDB(solicitud);
+  }
+
+  Future<void> updateSolicitudInFirestore(Solicitud solicitud) async {
+    await firestore.collection('Coleccion_Solicitud').doc(solicitud.id).update(solicitud.toMap());
+  }
+
+  Future<void> updateSolicitudInLocalDB(Solicitud solicitud) async {
+    final db = await database;
+    await db.update(
+      'Solicitudes',
+      solicitud.toMap(),
+      where: 'id = ?',
+      whereArgs: [solicitud.id],
+    );
   }
 
   Future<List<Solicitud>> getSolicitudes() async {

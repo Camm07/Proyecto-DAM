@@ -93,7 +93,22 @@ class _VerSolicitudesState extends State<VerSolicitudes> {
               return DataRow(
                 cells: [
                   DataCell(Text(document.id)),
-                  DataCell(Text(data['idSocio'])),
+                  DataCell(FutureBuilder<DocumentSnapshot>(
+                    future: _firestore.collection('Socios').doc(data['idSocio']).get(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Text('Cargando...');
+                      }
+                      if (snapshot.hasError) {
+                        return Text('Error');
+                      }
+                      if (!snapshot.hasData || !snapshot.data!.exists) {
+                        return Text('Nombre no disponible');
+                      }
+                      var socioData = snapshot.data!.data() as Map<String, dynamic>;
+                      return Text('${socioData['nombre']} ${socioData['apellidos']}');
+                    },
+                  )),
                   DataCell(Text(data['descripcion'])),
                   DataCell(Text(_formatDate(data['fechaHoraAtendida']))),
                   DataCell(Text(data['idSocio'])),
@@ -148,15 +163,15 @@ class _VerSolicitudesState extends State<VerSolicitudes> {
           actions: <Widget>[
             TextButton(
               child: Text('Aceptar'),
-              onPressed: () {
-                _updateSolicitudStatus(idSolicitud, 'Aprobada', _commentController.text);
+              onPressed: () async {
+                await _updateSolicitudStatus(idSolicitud, 'Aprobada', _commentController.text, data);
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
               child: Text('Rechazar'),
-              onPressed: () {
-                _updateSolicitudStatus(idSolicitud, 'Rechazada', _commentController.text);
+              onPressed: () async {
+                await _updateSolicitudStatus(idSolicitud, 'Rechazada', _commentController.text, data);
                 Navigator.of(context).pop();
               },
             ),
@@ -172,26 +187,19 @@ class _VerSolicitudesState extends State<VerSolicitudes> {
     );
   }
 
-  void _updateSolicitudStatus(String idSolicitud, String newStatus, String comment) async {
+  Future<void> _updateSolicitudStatus(String idSolicitud, String newStatus, String comment, Map<String, dynamic> data) async {
     try {
-      // Actualizar en Firestore
-      await _firestore.collection('Coleccion_Solicitud').doc(idSolicitud).update({
-        'estatus': newStatus,
-        'comentario': comment,
-      });
-
-      // Actualizar en SQLite
-      final db = await _databaseService.database;
-      await db.update(
-        'Solicitudes',
-        {
-          'estatus': newStatus,
-          'comentario': comment,
-        },
-        where: 'id = ?',
-        whereArgs: [idSolicitud],
+      Solicitud solicitud = Solicitud(
+        id: idSolicitud,
+        idSocio: data['idSocio'],
+        descripcion: data['descripcion'],
+        fechaHoraAtendida: DateTime.now(),
+        estatus: newStatus,
+        comentario: comment,
       );
 
+      await _databaseService.updateSolicitud(solicitud);
+      setState(() {}); // Refrescar la lista
       print('Solicitud actualizada correctamente.');
     } catch (e) {
       print('Error al actualizar la solicitud: $e');
