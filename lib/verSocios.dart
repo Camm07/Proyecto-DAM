@@ -42,11 +42,11 @@ class _LSociosState extends State<LSocios> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: Icon(Icons.edit),
+                      icon: Icon(Icons.edit,color: Colors.indigo,),
                       onPressed: () => _editarSocio(socio),
                     ),
                     IconButton(
-                      icon: Icon(Icons.swap_horiz),
+                      icon: Icon(Icons.swap_horiz,color: Colors.indigo,),
                       onPressed: () => _cambiarEstado(socio),
                     ),
                   ],
@@ -102,7 +102,7 @@ class _LSociosState extends State<LSocios> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Editar Socio'),
+          title: Text('Editar Socio',style: TextStyle(color: Colors.indigo,),textAlign: TextAlign.center,),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[

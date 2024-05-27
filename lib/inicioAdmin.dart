@@ -21,19 +21,10 @@ class _AdminState extends State<InicioAdmin> {
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.white,
-        title: Text("Bienvenido Admin",style: TextStyle(color: Colors.white),),
+        title: Text("Bienvenido Administrador",style: TextStyle(color: Colors.white),),
         centerTitle: true,
         backgroundColor: Colors.indigoAccent,
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: IconButton(
-              onPressed: (){},
-              icon: Icon(Icons.access_time_outlined),
-              color: Colors.white,
-            ),
-          )
-        ],
+
       ),
       body: pantallas(),
       drawer: Drawer(

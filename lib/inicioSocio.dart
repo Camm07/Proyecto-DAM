@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:proyecto_dam/ServiciosRemotos.dart';
 import 'package:proyecto_dam/main.dart';
@@ -16,6 +17,12 @@ class InicioSocio extends StatefulWidget {
 }
 
 class _InicioSocioState extends State<InicioSocio> {
+  final List<String> imgList = [
+    'assets/logoinicio.png',
+    'assets/imagen2.jpeg',
+    'assets/imagen3.jpeg',
+    'assets/imagen4.jpeg'
+  ];
   int _indice = 1;
   Socio? socioActual;
 
@@ -41,16 +48,7 @@ class _InicioSocioState extends State<InicioSocio> {
         title: Text("SOCIO", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: Colors.indigoAccent,
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: IconButton(
-              icon: Icon(Icons.access_time_outlined),
-              color: Colors.black,
-              onPressed: () {},
-            ),
-          )
-        ],
+
       ),
       body: pantallas(),
       drawer: Drawer(
@@ -119,7 +117,60 @@ class _InicioSocioState extends State<InicioSocio> {
     );
   }
 
-  Widget Inicio() => Center(child: Text('Bienvenido, ${socioActual?.nombre ?? "Socio"}', style: TextStyle(fontSize: 24)));
+  Widget Inicio() => Center(
+    child: Padding(
+      padding: const EdgeInsets.only(top: 40),
+      child: Column(
+        children: [
+          Text('Bienvenido, ${socioActual?.nombre ?? "Socio"}', style: TextStyle(fontSize: 25,color: Colors.indigo),),
+          SizedBox(height: 45),
+          Text(
+            'Explora las áreas exclusivas que tenemos para ti.',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(height: 30,),
+          CarouselSlider(
+            options: CarouselOptions(
+              autoPlay: true,
+              aspectRatio: 2.0,
+              enlargeCenterPage: true,
+              viewportFraction: 0.8,
+            ),
+            items: imgList.map((item) => Container(
+              child: Center(
+                  child: Image.asset(item, fit: BoxFit.cover, width: 1000,height: 1100,)
+              ),
+            )).toList(),
+          ),
+          SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.all(15),
+            child: Text(
+              'En el Club Deportivo, contamos con instalaciones de primera clase, incluyendo piscinas, canchas de tenis, gimnasios totalmente equipados y áreas de relajación. Explora, participa y disfruta de las diversas actividades y eventos que tenemos para ti.',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.justify,
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(
+            '¡Ven y vive la experiencia!',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.indigo[800],
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ),
+  );
 
 
 

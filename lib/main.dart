@@ -181,9 +181,29 @@ class _MyAppState extends State<MyApp> {
                   ),
                   SizedBox(height: 40),
                   ElevatedButton(
-                    onPressed: handleLogin,
-                    child: Text("AUTENTICAR"),
+                    onPressed: (){
+                      if (email.text.isEmpty || password.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Campo vacío, por favor revisa que todos los campos estén completos."),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else {
+                        handleLogin();
+                      }
+                      },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(Icons.login, color: Colors.white),
+                        SizedBox(width: 8),
+                        Text("INGRESAR"),
+                      ],
+                    ),
+
                     style: ButtonStyle(
+
                       backgroundColor: MaterialStateProperty.all(Colors.indigo), // Establece el color de fondo a índigo
                       foregroundColor: MaterialStateProperty.all(Colors.white), // Establece el color del texto a blanco
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(

@@ -20,7 +20,7 @@ class _ReservacionSocioState extends State<ReservacionSocio> {
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.transparent,
-        title: Text('Reservación del Socio',style: TextStyle(color: Colors.indigo,fontSize: 25),),
+        title: Text('Reservación de Espacio',style: TextStyle(color: Colors.indigo,fontSize: 25),),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20.0),
@@ -31,7 +31,7 @@ class _ReservacionSocioState extends State<ReservacionSocio> {
               controller: _fechaController,
               decoration: InputDecoration(
                 labelText: 'Fecha de la Reservación',
-                suffixIcon: Icon(Icons.calendar_today),
+                suffixIcon: Icon(Icons.calendar_today,color: Colors.indigo,),
               ),
               readOnly: true,
               onTap: () async {
@@ -71,9 +71,24 @@ class _ReservacionSocioState extends State<ReservacionSocio> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: _attemptReservation,
-              child: Text("Reservar",style: TextStyle(color: Colors.white),),
-              style: ElevatedButton.styleFrom(
-                primary: Theme.of(context).primaryColor,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.date_range_rounded),
+                  SizedBox(width: 8,),
+                  Text("Reservar",style: TextStyle(color: Colors.white,fontSize: 17),),
+                ],
+              ),
+              style: ButtonStyle(
+
+                backgroundColor: MaterialStateProperty.all(Colors.indigo), // Establece el color de fondo a índigo
+                foregroundColor: MaterialStateProperty.all(Colors.white), // Establece el color del texto a blanco
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0), // Añade bordes redondeados al botón
+                    )
+                ),
+                padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0)), // Añade padding interno
               ),
             ),
           ],

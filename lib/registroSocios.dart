@@ -22,7 +22,7 @@ class _RSociosState extends State<RSocios> {
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.transparent,
-        title: Text("Registrar Socio",style: TextStyle(color: Colors.indigo,fontSize: 30),),
+        title: Text("Registro de Socios",style: TextStyle(color: Colors.indigo,fontSize: 30),),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -63,7 +63,14 @@ class _RSociosState extends State<RSocios> {
             SizedBox(height: 35),
             ElevatedButton(
               onPressed: _registrarSocio,
-              child: Text('Registrar Socio'),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Registrar',style: TextStyle(fontSize: 17),),
+                  SizedBox(width: 10,),
+                  Icon(Icons.add_box_rounded)
+                ],
+              ),
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.indigo), // Establece el color de fondo a índigo
                 foregroundColor: MaterialStateProperty.all(Colors.white), // Establece el color del texto a blanco
@@ -88,6 +95,16 @@ class _RSociosState extends State<RSocios> {
     final String telefono = _telefonoController.text;
     final String curp = _curpController.text;
     final String contrasena = _contrasenaController.text;
+
+
+    // Validación de campos no vacíos
+    if (nombre.isEmpty || apellidos.isEmpty || correo.isEmpty || telefono.isEmpty || curp.isEmpty || contrasena.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Por favor, complete todos los campos para registrar al socio.'), backgroundColor: Colors.red)
+      );
+      return;  // Detener la ejecución si algún campo está vacío
+    }
+
 
     try {
       // Crear usuario en FirebaseAuth

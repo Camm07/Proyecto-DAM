@@ -18,7 +18,9 @@ class _VerSolicitudesState extends State<VerSolicitudes> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Listado de Solicitudes'),
+        foregroundColor: Colors.transparent,
+        title: Text('Listado de Solicitudes',style: TextStyle(color: Colors.indigo,fontSize: 25),),
+        centerTitle: true,
       ),
       body: Column(
         children: [
@@ -36,7 +38,7 @@ class _VerSolicitudesState extends State<VerSolicitudes> {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-          Text('Filtrar por estatus:'),
+          Text('Filtrar por estatus:',style: TextStyle(fontSize: 18),),
           SizedBox(width: 10),
           DropdownButton<String>(
             value: _filtroEstatus,
@@ -77,55 +79,63 @@ class _VerSolicitudesState extends State<VerSolicitudes> {
         }
 
         return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: DataTable(
-            columns: [
-              DataColumn(label: Text('ID Solicitud')),
-              DataColumn(label: Text('Nombre Socio')),
-              DataColumn(label: Text('Descripción')),
-              DataColumn(label: Text('Fecha/Hora')),
-              DataColumn(label: Text('ID Socio')),
-              DataColumn(label: Text('Estatus')),
-              DataColumn(label: Text('Acciones')),
-            ],
-            rows: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-              return DataRow(
-                cells: [
-                  DataCell(Text(document.id)),
-                  DataCell(FutureBuilder<DocumentSnapshot>(
-                    future: _firestore.collection('Socios').doc(data['Id_Socio']).get(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Text('Cargando...');
-                      }
-                      if (snapshot.hasError) {
-                        return Text('Error');
-                      }
-                      if (!snapshot.hasData || !snapshot.data!.exists) {
-                        return Text('Nombre no disponible');
-                      }
-                      var socioData = snapshot.data!.data() as Map<String, dynamic>;
-                      return Text('${socioData['nombre']} ${socioData['apellidos']}');
-                    },
-                  )),
-                  DataCell(Text(data['Descripcion'])),
-                  DataCell(Text(_formatDate(data['Fecha_Hora_Atendida']))),
-                  DataCell(Text(data['Id_Socio'])),
-                  DataCell(Text(data['Estatus'])),
-                  DataCell(ElevatedButton(
-                    onPressed: () {
-                      _showAtenderDialog(context, document.id, data);
-                    },
-                    child: Text('Atender'),
-                  )),
-                ],
-              );
-            }).toList(),
+          scrollDirection: Axis.vertical,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: DataTable(
+              columns: [
+                DataColumn(label: Text('ID Solicitud', style: TextStyle(color: Colors.indigo, fontSize: 17))),
+                DataColumn(label: Text('Nombre Socio', style: TextStyle(color: Colors.indigo, fontSize: 17))),
+                DataColumn(label: Text('Descripción', style: TextStyle(color: Colors.indigo, fontSize: 17))),
+                DataColumn(label: Text('Fecha/Hora', style: TextStyle(color: Colors.indigo, fontSize: 17))),
+                DataColumn(label: Text('ID Socio', style: TextStyle(color: Colors.indigo, fontSize: 17))),
+                DataColumn(label: Text('Estatus', style: TextStyle(color: Colors.indigo, fontSize: 17))),
+                DataColumn(label: Text('Acciones', style: TextStyle(color: Colors.indigo, fontSize: 17))),
+              ],
+              rows: snapshot.data!.docs.map((DocumentSnapshot document) {
+                Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                return DataRow(
+                  color: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+                    return getStatusColor(data['Estatus']);
+                  }),
+                  cells: [
+                    DataCell(Text(document.id)),
+                    DataCell(Text('${data['Nombre Socio']}')),
+                    DataCell(Text(data['Descripcion'])),
+                    DataCell(Text(_formatDate(data['Fecha_Hora_Atendida']))),
+                    DataCell(Text(data['Id_Socio'])),
+                    DataCell(Text(data['Estatus'])),
+                    DataCell(ElevatedButton(
+                      onPressed: () {
+                        _showAtenderDialog(context, document.id, data);
+                      },
+                      child: Text('Atender', style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.indigo,  // Fondo azul índigo
+                      ),
+                    )),
+                  ],
+                );
+              }).toList(),
+            ),
           ),
         );
+
       },
     );
+  }
+
+  Color? getStatusColor(String status) {
+    switch (status) {
+      case 'Pendiente':
+        return Colors.yellow[200];  // Amarillo pastel
+      case 'Aprobada':
+        return Colors.green[200];  // Verde pastel
+      case 'Rechazada':
+        return Colors.red[200];  // Rojo pastel
+      default:
+        return null;  // Sin color
+    }
   }
 
   String _formatDate(dynamic date) {
@@ -164,15 +174,35 @@ class _VerSolicitudesState extends State<VerSolicitudes> {
             TextButton(
               child: Text('Aceptar'),
               onPressed: () async {
-                await _updateSolicitudStatus(idSolicitud, 'Aprobada', _commentController.text, data);
-                Navigator.of(context).pop();
+                if (_commentController.text.isEmpty) {
+                  Navigator.of(context).pop(); // Cierra el diálogo para mostrar el SnackBar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Por favor, escribe un comentario antes de aceptar."),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                } else {
+                  await _updateSolicitudStatus(idSolicitud, 'Aprobada', _commentController.text, data);
+                  Navigator.of(context).pop();
+                }
               },
             ),
             TextButton(
               child: Text('Rechazar'),
               onPressed: () async {
-                await _updateSolicitudStatus(idSolicitud, 'Rechazada', _commentController.text, data);
-                Navigator.of(context).pop();
+                if (_commentController.text.isEmpty) {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Por favor, escribe un comentario antes de rechazar."),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                } else {
+                  await _updateSolicitudStatus(idSolicitud, 'Rechazada', _commentController.text, data);
+                  Navigator.of(context).pop();
+                }
               },
             ),
             TextButton(

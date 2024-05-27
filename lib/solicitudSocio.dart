@@ -18,7 +18,9 @@ class _SolicitudSocioState extends State<SolicitudSocio> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Solicitud del Socio'),
+        foregroundColor: Colors.transparent,
+        title: Text('Solicitud de cambios',style:TextStyle(color: Colors.indigo,fontSize: 25) ,),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -27,13 +29,32 @@ class _SolicitudSocioState extends State<SolicitudSocio> {
             TextField(
               controller: _descripcionController,
               decoration: InputDecoration(
-                labelText: 'Describe su solicitud aquí',
+                labelText: 'Escriba su solicitud aquí',
+                suffixIcon: Icon(Icons.wallet_rounded,color: Colors.indigo,)
               ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: _enviarSolicitud,
-              child: Text('Enviar Solicitud'),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.send,color: Colors.white,),
+                  SizedBox(width: 8,),
+                  Text('Enviar Solicitud'),
+                ],
+              ),
+              style: ButtonStyle(
+
+                backgroundColor: MaterialStateProperty.all(Colors.indigo), // Establece el color de fondo a índigo
+                foregroundColor: MaterialStateProperty.all(Colors.white), // Establece el color del texto a blanco
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0), // Añade bordes redondeados al botón
+                    )
+                ),
+                padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0)), // Añade padding interno
+              ),
             ),
             SizedBox(height: 20),
             Expanded(

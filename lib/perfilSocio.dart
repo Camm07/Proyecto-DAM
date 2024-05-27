@@ -50,7 +50,7 @@ class _PerfilSocioState extends State<PerfilSocio> {
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.white,
-        title: Text('Perfil del Socio',style: TextStyle(color: Colors.indigo),),
+        title: Text('Perfil',style: TextStyle(color: Colors.indigo,fontSize: 30),),
         centerTitle: true,
         actions: [
           IconButton(
@@ -65,7 +65,7 @@ class _PerfilSocioState extends State<PerfilSocio> {
           children: <Widget>[
             CircleAvatar(
               backgroundImage: NetworkImage(socioLocal!.fotoPerfil),
-              radius: 60,
+              radius: 65,
             ),
             SizedBox(height: 20,),
           Padding(
@@ -90,7 +90,14 @@ class _PerfilSocioState extends State<PerfilSocio> {
             SizedBox(height: 20,),
             ElevatedButton(
               onPressed: _cambiarFotoPerfil,
-              child: Text('Cambiar Foto',style: TextStyle(fontSize: 18),),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Cambiar Foto',style: TextStyle(fontSize: 18),),
+                  SizedBox(width: 30,),
+                  Icon(Icons.photo_camera)
+                ],
+              ),
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.indigo), // Establece el color de fondo a índigo
                 foregroundColor: MaterialStateProperty.all(Colors.white), // Establece el color del texto a blanco

@@ -15,7 +15,9 @@ class _VerReservacionesState extends State<VerReservaciones> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Listado de Reservaciones'),
+        foregroundColor: Colors.transparent,
+        title: Text('Listado de Reservaciones',style: TextStyle(color: Colors.indigo,fontSize: 25),),
+        centerTitle: true,
       ),
       body: Column(
         children: [
@@ -33,7 +35,7 @@ class _VerReservacionesState extends State<VerReservaciones> {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-          Text('Filtrar por estatus:'),
+          Text('Filtrar por estatus:',style: TextStyle(fontSize: 18),),
           SizedBox(width: 10),
           DropdownButton<String>(
             value: _filtroEstatus,
@@ -74,64 +76,84 @@ class _VerReservacionesState extends State<VerReservaciones> {
         }
 
         return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: DataTable(
-            columns: [
-              DataColumn(label: Text('ID Reservación')),
-              DataColumn(label: Text('Nombre Socio')),
-              DataColumn(label: Text('Fecha de Reservación')),
-              DataColumn(label: Text('Espacio')),
-              DataColumn(label: Text('Estatus')),
-              DataColumn(label: Text('Acciones')),
-            ],
-            rows: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-              print('Procesando reservación: ${document.id} con Id_Socio: ${data['Id_Socio']}');
-              return DataRow(
-                cells: [
-                  DataCell(Text(document.id)),
-                  DataCell(FutureBuilder<DocumentSnapshot>(
-                    future: _firestore.collection('Socios').doc(data['Id_Socio']).get(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Text('Cargando...');
-                      }
-                      if (snapshot.hasError) {
-                        print('Error al obtener los datos del socio: ${snapshot.error}');
-                        return Text('Error');
-                      }
-                      if (!snapshot.hasData || !snapshot.data!.exists) {
-                        print('El documento del socio con ID ${data['Id_Socio']} no existe o no tiene datos');
-                        return Text('Nombre no disponible');
-                      }
-                      var socioData = snapshot.data!.data() as Map<String, dynamic>;
-                      if (socioData.containsKey('nombre') && socioData.containsKey('apellidos')) {
-                        print('Datos del socio obtenidos: ${socioData['nombre']} ${socioData['apellidos']}');
-                        return Text('${socioData['nombre']} ${socioData['apellidos']}');
-                      } else {
-                        print('El documento del socio no tiene los campos "nombre" o "apellidos"');
-                        return Text('Nombre no disponible');
-                      }
-                    },
-                  )),
-                  DataCell(Text(_formatDate(data['Fecha_Reservacion']))),
-                  DataCell(Text(data['Espacio'])),
-                  DataCell(Text(data['Estatus'])),
-                  DataCell(ElevatedButton(
-                    onPressed: () {
-                      _showAtenderDialog(context, document.id, data);
-                    },
-                    child: Text('Atender'),
-                  )),
-                ],
-              );
-            }).toList(),
+          scrollDirection: Axis.vertical,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: DataTable(
+              columns: [
+                DataColumn(label: Text('ID Reservación',style: TextStyle(color: Colors.indigo, fontSize: 17))),
+                DataColumn(label: Text('Nombre Socio',style: TextStyle(color: Colors.indigo, fontSize: 17))),
+                DataColumn(label: Text('Fecha de Reservación',style: TextStyle(color: Colors.indigo, fontSize: 17))),
+                DataColumn(label: Text('Espacio',style: TextStyle(color: Colors.indigo, fontSize: 17))),
+                DataColumn(label: Text('Estatus',style: TextStyle(color: Colors.indigo, fontSize: 17))),
+                DataColumn(label: Text('Acciones',style: TextStyle(color: Colors.indigo, fontSize: 17))),
+              ],
+              rows: snapshot.data!.docs.map((DocumentSnapshot document) {
+                Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                print('Procesando reservación: ${document.id} con Id_Socio: ${data['Id_Socio']}');
+                return DataRow(
+                  color: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+                    return getStatusColor(data['Estatus']);
+                  }),
+                  cells: [
+                    DataCell(Text(document.id)),
+                    DataCell(FutureBuilder<DocumentSnapshot>(
+                      future: _firestore.collection('Socios').doc(data['Id_Socio']).get(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Text('Cargando...');
+                        }
+                        if (snapshot.hasError) {
+                          print('Error al obtener los datos del socio: ${snapshot.error}');
+                          return Text('Error');
+                        }
+                        if (!snapshot.hasData || !snapshot.data!.exists) {
+                          print('El documento del socio con ID ${data['Id_Socio']} no existe o no tiene datos');
+                          return Text('Nombre no disponible');
+                        }
+                        var socioData = snapshot.data!.data() as Map<String, dynamic>;
+                        if (socioData.containsKey('nombre') && socioData.containsKey('apellidos')) {
+                          print('Datos del socio obtenidos: ${socioData['nombre']} ${socioData['apellidos']}');
+                          return Text('${socioData['nombre']} ${socioData['apellidos']}');
+                        } else {
+                          print('El documento del socio no tiene los campos "nombre" o "apellidos"');
+                          return Text('Nombre no disponible');
+                        }
+                      },
+                    )),
+                    DataCell(Text(_formatDate(data['Fecha_Reservacion']))),
+                    DataCell(Text(data['Espacio'])),
+                    DataCell(Text(data['Estatus'])),
+                    DataCell(ElevatedButton(
+                      onPressed: () {
+                        _showAtenderDialog(context, document.id, data);
+                      },
+                      child: Text('Atender', style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.indigo,  // Fondo azul índigo
+                      ),
+                    )),
+                  ],
+                );
+              }).toList(),
+            ),
           ),
         );
       },
     );
   }
-
+  Color? getStatusColor(String status) {
+    switch (status) {
+      case 'Pendiente':
+        return Colors.yellow[200];  // Amarillo pastel
+      case 'Aprobada':
+        return Colors.green[200];  // Verde pastel
+      case 'Rechazada':
+        return Colors.red[200];  // Rojo pastel
+      default:
+        return null;  // Sin color
+    }
+  }
   String _formatDate(dynamic date) {
     if (date is Timestamp) {
       return DateFormat('yyyy-MM-dd').format(date.toDate());
@@ -170,15 +192,37 @@ class _VerReservacionesState extends State<VerReservaciones> {
             TextButton(
               child: Text('Aceptar'),
               onPressed: () {
-                _updateReservationStatus(idReserva, 'Aprobada', _commentController.text);
-                Navigator.of(context).pop();
+                if (_commentController.text.isEmpty) {
+                  Navigator.of(context).pop(); // Cierra el diálogo para mostrar el SnackBar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Por favor, escribe un comentario antes de aceptar."),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                } else {
+                  _updateReservationStatus(
+                      idReserva, 'Aprobada', _commentController.text);
+                  Navigator.of(context).pop();
+                }
               },
             ),
             TextButton(
               child: Text('Rechazar'),
               onPressed: () {
-                _updateReservationStatus(idReserva, 'Rechazada', _commentController.text);
-                Navigator.of(context).pop();
+                if (_commentController.text.isEmpty) {
+                  Navigator.of(context).pop(); // Cierra el diálogo para mostrar el SnackBar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Por favor, escribe un comentario antes de rechazar."),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                } else {
+                  _updateReservationStatus(
+                      idReserva, 'Rechazada', _commentController.text);
+                  Navigator.of(context).pop();
+                }
               },
             ),
             TextButton(
