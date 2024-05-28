@@ -100,7 +100,21 @@ class _VerSolicitudesState extends State<VerSolicitudes> {
                   }),
                   cells: [
                     DataCell(Text(document.id)),
-                    DataCell(Text('${data['Nombre Socio']}')),
+                    DataCell(FutureBuilder<DocumentSnapshot>(
+                      future: _firestore.collection('Socios').doc(data['Id_Socio']).get(),
+                      builder: (context, AsyncSnapshot<DocumentSnapshot> socioSnapshot) {
+                        if (socioSnapshot.connectionState == ConnectionState.waiting) {
+                          return Text('Cargando...');
+                        } else if (socioSnapshot.hasError) {
+                          return Text('Error');
+                        } else if (!socioSnapshot.hasData || !socioSnapshot.data!.exists) {
+                          return Text('Nombre no disponible');
+                        } else {
+                          var socioData = socioSnapshot.data!.data() as Map<String, dynamic>;
+                          return Text(socioData['nombre'] ?? 'Nombre no disponible');
+                        }
+                      },
+                    )),
                     DataCell(Text(data['Descripcion'])),
                     DataCell(Text(_formatDate(data['Fecha_Hora_Atendida']))),
                     DataCell(Text(data['Id_Socio'])),

@@ -115,9 +115,9 @@ class _SolicitudSocioState extends State<SolicitudSocio> {
                     ? (data['Fecha_Hora_Atendida'] as Timestamp).toDate()
                     : DateTime.parse(data['Fecha_Hora_Atendida']);
                 return ListTile(
-                  title: Text(data['Descripcion']),
-                  subtitle: Text(DateFormat('yyyy-MM-dd HH:mm:ss').format(fechaHora)),
-                  trailing: Text(data['Estatus']),
+                  title: Text(data['Descripcion'],style: TextStyle(fontSize: 16),),
+                  subtitle: Text(DateFormat('yyyy-MM-dd HH:mm:ss').format(fechaHora),style: TextStyle(fontSize: 16)),
+                  trailing: Text(data['Estatus'],style: TextStyle(fontSize: 16, color: getColorForStatus(data['Estatus']))),
                 );
               }).toList(),
             );
@@ -125,6 +125,19 @@ class _SolicitudSocioState extends State<SolicitudSocio> {
         );
       },
     );
+  }
+
+  Color getColorForStatus(String status) {
+    switch (status) {
+      case 'Pendiente':
+        return Colors.blue;  // Color azul para pendiente
+      case 'Aprobada':
+        return Colors.green;  // Color verde para aprobada
+      case 'Rechazada':
+        return Colors.red;  // Color rojo para rechazada
+      default:
+        return Colors.black;  // Un color por defecto si no se reconoce el estatus
+    }
   }
 
   void _showMessage(String message) {

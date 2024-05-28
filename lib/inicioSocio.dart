@@ -18,7 +18,7 @@ class InicioSocio extends StatefulWidget {
 
 class _InicioSocioState extends State<InicioSocio> {
   final List<String> imgList = [
-    'assets/logoinicio.png',
+    'assets/imagen1.jpeg',
     'assets/imagen2.jpeg',
     'assets/imagen3.jpeg',
     'assets/imagen4.jpeg'
@@ -161,7 +161,7 @@ class _InicioSocioState extends State<InicioSocio> {
           Text(
             '¡Ven y vive la experiencia!',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.indigo[800],
             ),

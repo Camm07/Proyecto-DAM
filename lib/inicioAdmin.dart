@@ -1,10 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:proyecto_dam/ServiciosRemotos.dart';
 import 'package:proyecto_dam/main.dart';
 import 'package:proyecto_dam/registroSocios.dart';
 import 'package:proyecto_dam/verReservacionesAdmin.dart';
 import 'package:proyecto_dam/verSocios.dart';
 import 'package:proyecto_dam/verSolicitudAdmin.dart';
+
+import 'ServiciosFirebaseySQFlite.dart';
 
 
 class InicioAdmin extends StatefulWidget {
@@ -15,6 +19,9 @@ class InicioAdmin extends StatefulWidget {
 }
 
 class _AdminState extends State<InicioAdmin> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+
   int _indice=1;
   @override
   Widget build(BuildContext context) {
@@ -23,7 +30,7 @@ class _AdminState extends State<InicioAdmin> {
         foregroundColor: Colors.white,
         title: Text("Bienvenido Administrador",style: TextStyle(color: Colors.white),),
         centerTitle: true,
-        backgroundColor: Colors.indigoAccent,
+        backgroundColor: Colors.indigo,
 
       ),
       body: pantallas(),
@@ -123,20 +130,81 @@ class _AdminState extends State<InicioAdmin> {
   }
 
   Widget Inicio() {
-    return Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        foregroundColor: Colors.transparent,
+        title: Text("Solicitudes pendientes",style: TextStyle(color: Colors.indigo,fontSize: 28),),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          Expanded(child: _buildPendingRequests()),
+        ],
+      ),
+    );
+
+  }
+
+
+  Widget _buildPendingRequests() {
+    DateTime now = DateTime.now();
+    DateTime startToday = DateTime(now.year, now.month, now.day);
+    DateTime endToday = DateTime(now.year, now.month, now.day + 1).subtract(Duration(seconds: 1));
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: _firestore.collection('Coleccion_Solicitud')
+          .where('Estatus', isEqualTo: 'Pendiente')
+          .where('Fecha_Hora_Atendida', isGreaterThanOrEqualTo: startToday)
+          .where('Fecha_Hora_Atendida', isLessThanOrEqualTo: endToday)
+          .orderBy('Fecha_Hora_Atendida', descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text('Error al cargar las solicitudes: ${snapshot.error}'));
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.data != null && snapshot.data!.docs.isEmpty) {
+          // No hay solicitudes pendientes
+          return Center(child:  Text("No hay solicitudes nuevas",style: TextStyle(color: Colors.teal,fontSize: 25),));
+        }
+
+        return ListView(
+          children: snapshot.data!.docs.map((doc) {
+            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+            return FutureBuilder<DocumentSnapshot>(
+              future: _firestore.collection('Socios').doc(data['Id_Socio']).get(),
+              builder: (context, socioSnapshot) {
+                if (socioSnapshot.connectionState == ConnectionState.waiting) {
+                  return ListTile(title: Text('Cargando nombre...'));
+                }
+                if (socioSnapshot.hasError) {
+                  return ListTile(title: Text('Error al obtener datos del socio'));
+                }
+                if (!socioSnapshot.hasData || !socioSnapshot.data!.exists) {
+                  return ListTile(title: Text('Nombre no disponible'));
+                }
+                Map<String, dynamic> socioData = socioSnapshot.data!.data() as Map<String, dynamic>;
+                return ListTile(
+                  tileColor: Colors.lightBlue[50],
+                  title: Text(socioData['nombre'] ?? 'Nombre no disponible',style: TextStyle(fontSize: 17),),
+                  subtitle: Text(data['Descripcion'] ?? 'Descripción no disponible',style: TextStyle(fontSize: 16)),
+                  trailing: Text(_formatDate(data['Fecha_Hora_Atendida'],),style: TextStyle(fontSize: 16)),
+                );
+              },
+            );
+          }).toList(),
+        );
+      },
+    );
   }
 
 
 
 
-
-  Widget Solicitud() {
-    return Scaffold();
+  String _formatDate(Timestamp date) {
+    return DateFormat('yyyy-MM-dd HH:mm').format(date.toDate());
   }
-
-  Widget Reservacion() {
-    return Scaffold();
-  }
-
 
 }
