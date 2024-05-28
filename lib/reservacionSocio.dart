@@ -26,7 +26,7 @@ class _ReservacionSocioState extends State<ReservacionSocio> {
         padding: EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
+          children: [
             TextField(
               controller: _fechaController,
               decoration: InputDecoration(
@@ -91,6 +91,8 @@ class _ReservacionSocioState extends State<ReservacionSocio> {
                 padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0)), // Añade padding interno
               ),
             ),
+            SizedBox(height:30),
+            _buildReservacionesList(),
           ],
         ),
       ),
@@ -124,7 +126,11 @@ class _ReservacionSocioState extends State<ReservacionSocio> {
           'Comentario': "",
           'Estatus': "Pendiente",
         });
+
+        // Limpieza después de enviar la reserva
+        _fechaController.clear();
         _showMessage('Tu reserva fue enviada exitosamente.');
+
       } catch (error) {
         _showMessage('Error al enviar la reserva: $error');
       }
@@ -133,9 +139,76 @@ class _ReservacionSocioState extends State<ReservacionSocio> {
     }
   }
 
+  Widget _buildReservacionesList() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(10),
+      child: FutureBuilder<String?>(
+        future: obtenerIdSocioActual(),
+        builder: (context, snapshotId) {
+          if (!snapshotId.hasData) {
+            return Center(child: Text('Cargando...'));
+          }
+          return StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('Coleccion_Reservacion')
+                .where('Id_Socio', isEqualTo: snapshotId.data)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+              if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
+              var docs = snapshot.data!.docs;
+              if (docs.isEmpty) {
+                return Center(child: Text('No hay reservaciones disponibles.'));
+              }
+              return ListView(
+                shrinkWrap: true,
+                children: docs.map((doc) {
+                  Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+                  return ListTile(
+                    title: Text(data['Espacio'], style: TextStyle(fontSize: 16)),
+                    subtitle: Text(_formatDate(data['Fecha_Reservacion']), style: TextStyle(fontSize: 16)),
+                    trailing: Text(data['Estatus'], style: TextStyle(fontSize: 16, color: getColorForStatus(data['Estatus']))),
+                  );
+                }).toList(),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
 
+  Color getColorForStatus(String status) {
+    switch (status) {
+      case 'Pendiente':
+        return Colors.blue;  // Color azul para pendiente
+      case 'Aprobada':
+        return Colors.green;  // Color verde para aprobada
+      case 'Rechazada':
+        return Colors.red;  // Color rojo para rechazada
+      default:
+        return Colors.black;  // Un color por defecto si no se reconoce el estatus
+    }
+  }
 
-
+  String _formatDate(dynamic date) {
+    if (date is Timestamp) {
+      return DateFormat('yyyy-MM-dd').format(date.toDate());
+    } else if (date is String) {
+      return date; // Assuming date string is already formatted
+    } else {
+      return 'Fecha no disponible';
+    }
+  }
+  Future<String?> obtenerIdSocioActual() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? socioId = prefs.getString('socioId');
+    return socioId;
+  }
 
   void _showMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
